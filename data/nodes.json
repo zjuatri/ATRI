@@ -1,0 +1,897 @@
+{
+  "code": 200,
+  "message": "请求成功",
+  "data": {
+    "randomNodes": [
+      {
+        "idHash": "G3Bo05lpQ7cdwnla",
+        "idStr": "9d57175dfe7ab46bdfeada0947ced878",
+        "pidHash": null,
+        "nodeName": "滞后校正",
+        "attrs": [
+          { "name": "知识点", "value": "05" },
+          { "name": "重点", "value": "11" }
+        ],
+        "freeExam": 0,
+        "sort": 0,
+        "children": null
+      },
+      {
+        "idHash": "y19zjaDw3qCQkNR8",
+        "idStr": "542bc1170cb3a525b1201e5822a28447",
+        "pidHash": null,
+        "nodeName": "根轨迹与根轨迹方程",
+        "attrs": [
+          { "name": "知识点", "value": "05" },
+          { "name": "重点", "value": "11" }
+        ],
+        "freeExam": 1,
+        "sort": 0,
+        "children": null
+      },
+      {
+        "idHash": "EbMp0kz1q5c2pKO7",
+        "idStr": "61768190e58296eabbc2ee1c47157e41",
+        "pidHash": null,
+        "nodeName": "拉氏变换的定义",
+        "attrs": [
+          { "name": "知识点", "value": "05" },
+          { "name": "重点", "value": "11" }
+        ],
+        "freeExam": 0,
+        "sort": 0,
+        "children": null
+      }
+    ],
+    "nodeThemeRespVos": [
+      {
+        "idHash": "ARMz0vnb9dhB6Gml",
+        "idStr": "2102b21ddc3c3472d9dd4cbf3d213f51",
+        "pidHash": null,
+        "nodeName": "自动控制原理",
+        "attrs": [{ "name": "主题", "value": "01" }],
+        "freeExam": 0,
+        "sort": 1,
+        "children": [
+          {
+            "idHash": "qbwA8DmgvBcRo73A",
+            "idStr": "bb91f7ee1ab507d649021e03bbc4bca9",
+            "pidHash": "ARMz0vnb9dhB6Gml",
+            "nodeName": "自动控制系统工作原理",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 0,
+            "sort": 6,
+            "children": null
+          },
+          {
+            "idHash": "M1Rg0abDLKHQzkKo",
+            "idStr": "1a70f0c1ab30b2c02160d41b4ed7fcba",
+            "pidHash": "ARMz0vnb9dhB6Gml",
+            "nodeName": "反馈系统的基本组成",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 0,
+            "sort": 7,
+            "children": null
+          },
+          {
+            "idHash": "RjBNRp2Lv1SJZ7yN",
+            "idStr": "8a8db6b2e065ed1df12453c16b6d5e75",
+            "pidHash": "ARMz0vnb9dhB6Gml",
+            "nodeName": "开环与闭环控制",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 0,
+            "sort": 8,
+            "children": null
+          },
+          {
+            "idHash": "0RM6rmvW83hxoEjq",
+            "idStr": "0fa2450ff5127fbc13f85e01c5448389",
+            "pidHash": "ARMz0vnb9dhB6Gml",
+            "nodeName": "自动控制系统的基本类型",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 1,
+            "sort": 10,
+            "children": null
+          },
+          {
+            "idHash": "8RM30kvAjghv0nvd",
+            "idStr": "51a18a233e284603b54c27d8308d2158",
+            "pidHash": "ARMz0vnb9dhB6Gml",
+            "nodeName": "控制系统的基本要求",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 1,
+            "sort": 9,
+            "children": null
+          },
+          {
+            "idHash": "9RMK0lLvprUDZkDB",
+            "idStr": "f4f1ce6534c1986c209c9329de891fa6",
+            "pidHash": "ARMz0vnb9dhB6Gml",
+            "nodeName": "自动控制理论的发展简介",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 1,
+            "sort": 1,
+            "children": null
+          },
+          {
+            "idHash": "ky1exagj70Tdn1dx",
+            "idStr": "3b11ae6638f3d3285145624d08025431",
+            "pidHash": "ARMz0vnb9dhB6Gml",
+            "nodeName": "控制工程需要解决的问题",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 1,
+            "sort": 11,
+            "children": null
+          }
+        ]
+      },
+      {
+        "idHash": "noEA3DWzvBFpJV6R",
+        "idStr": "6b722274afb3fb41366f92b487410c9f",
+        "pidHash": null,
+        "nodeName": "控制系统的动态数学模型",
+        "attrs": [{ "name": "主题", "value": "01" }],
+        "freeExam": 0,
+        "sort": 2,
+        "children": [
+          {
+            "idHash": "x26K7nlDxLcKqZJa",
+            "idStr": "2ac406ed15255fa6b945fd8e9c507d85",
+            "pidHash": "noEA3DWzvBFpJV6R",
+            "nodeName": "微分方程表示的基本环节数学模型",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 0,
+            "sort": 1,
+            "children": null
+          },
+          {
+            "idHash": "WeBNMaklvwTjOewO",
+            "idStr": "f5d37bbb5e905c0e86a8f25e5afac29c",
+            "pidHash": "noEA3DWzvBFpJV6R",
+            "nodeName": "微分方程的线性化",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 1,
+            "sort": 2,
+            "children": null
+          },
+          {
+            "idHash": "EbMp0kz1q5c2pKO7",
+            "idStr": "61768190e58296eabbc2ee1c47157e41",
+            "pidHash": "g7zWMw3avBSQ38rD",
+            "nodeName": "拉氏变换的定义",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 1,
+            "children": null
+          },
+          {
+            "idHash": "7RMl0J9k7WhjMJ3l",
+            "idStr": "109375dd990c8b60b22d6fa6687f9307",
+            "pidHash": "g7zWMw3avBSQ38rD",
+            "nodeName": "简单函数的拉氏变换",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 1,
+            "sort": 2,
+            "children": null
+          },
+          {
+            "idHash": "j52qMNGvnBHWxg3v",
+            "idStr": "002f84ea9bdcfb117cc2dd47e1987572",
+            "pidHash": "g7zWMw3avBSQ38rD",
+            "nodeName": "拉氏变换的常用基本性质",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 3,
+            "children": null
+          },
+          {
+            "idHash": "rl5AOJW7vRhzJrDr",
+            "idStr": "e2a95c4bfa04fec2f53540cc8ec1d13a",
+            "pidHash": "g7zWMw3avBSQ38rD",
+            "nodeName": "拉氏反变换",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 5,
+            "children": null
+          },
+          {
+            "idHash": "J8B20a1eZbc3gzoW",
+            "idStr": "0ab90faa53426511fe293db5a6a0b0bc",
+            "pidHash": "G3Bo0VQ7GRtdeNal",
+            "nodeName": "传递函数",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 1,
+            "sort": 1,
+            "children": null
+          },
+          {
+            "idHash": "BRM80Zl3k5hm63A7",
+            "idStr": "e4fef58ac4f5aa9212a342d69f249673",
+            "pidHash": "G3Bo0VQ7GRtdeNal",
+            "nodeName": "典型环节的传递函数",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 0,
+            "sort": 2,
+            "children": null
+          },
+          {
+            "idHash": "x26K7nlDxLcKqZ9a",
+            "idStr": "694a8835c3cf846d073b7474f7624e07",
+            "pidHash": "noEA3DWzvBFpJVOR",
+            "nodeName": "方块图的简化",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 1,
+            "sort": 2,
+            "children": null
+          },
+          {
+            "idHash": "KOBD0v1dmlFGVLvA",
+            "idStr": "55eb16378c9abfcd367f86a470f6067a",
+            "pidHash": "noEA3DWzvBFpJVOR",
+            "nodeName": "绘制实际物理系统的方块图",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 0,
+            "sort": 3,
+            "children": null
+          },
+          {
+            "idHash": "lQWrnA2bvBTBw5B5",
+            "idStr": "0ea5d8cc959b37c6a303d3cafc3be428",
+            "pidHash": "noEA3DWzvBFpJVOR",
+            "nodeName": "方块图基本单元与组成",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 1,
+            "sort": 1,
+            "children": null
+          }
+        ]
+      },
+      {
+        "idHash": "7RMl0J9k7WhjMJjz",
+        "idStr": "4354a77d70e24362f45e368601e72ec4",
+        "pidHash": null,
+        "nodeName": "频率特性分析",
+        "attrs": [{ "name": "主题", "value": "01" }],
+        "freeExam": 0,
+        "sort": 4,
+        "children": [
+          {
+            "idHash": "j52qMNGvnBHWxgWw",
+            "idStr": "42b3e5dac970bab54a723878d9bd1067",
+            "pidHash": "7RMl0J9k7WhjMJjz",
+            "nodeName": "频率特性的基本概念",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 0,
+            "sort": 1,
+            "children": null
+          },
+          {
+            "idHash": "Q7BNMazmv2SRd9RA",
+            "idStr": "83a46c7490258046b523998d20472ead",
+            "pidHash": "y19zjn3qbmHQevQ7",
+            "nodeName": "极坐标图的作图方法",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" },
+              { "name": "难点", "value": "12" }
+            ],
+            "freeExam": 0,
+            "sort": 1,
+            "children": null
+          },
+          {
+            "idHash": "DxMp0kKOA5SjK3jR",
+            "idStr": "347d8feac2d8af81e75ddfd7c0c4187a",
+            "pidHash": "y19zjn3qbmHQevQ7",
+            "nodeName": "典型环节的极坐标图",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" },
+              { "name": "难点", "value": "12" }
+            ],
+            "freeExam": 0,
+            "sort": 2,
+            "children": null
+          },
+          {
+            "idHash": "1RML0erzvEUqg968",
+            "idStr": "9ac8662a64764eafc442de43583de608",
+            "pidHash": "y19zjn3qbmHQevQ7",
+            "nodeName": "一般线性定常系统极坐标图的规律",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" },
+              { "name": "难点", "value": "12" }
+            ],
+            "freeExam": 0,
+            "sort": 3,
+            "children": null
+          },
+          {
+            "idHash": "megRlDj3vMT5Z95g",
+            "idStr": "54bbf174b2f8f2283fd85f31148ce39d",
+            "pidHash": "ZxBNMlA2v5SpBZp1",
+            "nodeName": "典型环节的对数坐标图",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 1,
+            "children": null
+          },
+          {
+            "idHash": "lQWrnA2bvBTBw5v5",
+            "idStr": "950985f42dcdd112b18d2a28961027f7",
+            "pidHash": "ZxBNMlA2v5SpBZp1",
+            "nodeName": "对数坐标图的作图方法",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 2,
+            "children": null
+          },
+          {
+            "idHash": "3RMJ0mO518hqDoQr",
+            "idStr": "fb41658a973b1e7bf4cd542a6bce9302",
+            "pidHash": "ZxBNMlA2v5SpBZp1",
+            "nodeName": "极坐标图与对数坐标图的关系",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 3,
+            "children": null
+          },
+          {
+            "idHash": "KOBD0v1dmlFGVL6a",
+            "idStr": "b141c00f3c007d40c66ca3d849b15ef3",
+            "pidHash": "7RMl0J9k7WhjMJaz",
+            "nodeName": "最小相位系统",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 1,
+            "children": null
+          },
+          {
+            "idHash": "WeBNMOQAklhj3Q29",
+            "idStr": "e272f527407d17ad70987ac52ca9460d",
+            "pidHash": "7RMl0J9k7WhjMJaz",
+            "nodeName": "由频率特性曲线求系统传递函数",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 5,
+            "children": null
+          },
+          {
+            "idHash": "Q7BNMazmv2SRd96A",
+            "idStr": "033ee495d5f6d571e84c63162851b83c",
+            "pidHash": "y19zjn3qbmHQev27",
+            "nodeName": "由开环频率特性估计闭环频率特性",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 1,
+            "children": null
+          },
+          {
+            "idHash": "eg3yM7bJvmtap73Q",
+            "idStr": "b2d1d78dab650adc542c3806a0052529",
+            "pidHash": "y19zjn3qbmHQev27",
+            "nodeName": "系统闭环频域指标",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 2,
+            "children": null
+          }
+        ]
+      },
+      {
+        "idHash": "ky1exagj70TdnWaR",
+        "idStr": "835e3c058d024f85eb9e68043b986de6",
+        "pidHash": null,
+        "nodeName": "控制系统的稳定性分析",
+        "attrs": [{ "name": "主题", "value": "01" }],
+        "freeExam": 0,
+        "sort": 5,
+        "children": [
+          {
+            "idHash": "DxMp07rdKOUjZO1G",
+            "idStr": "2a0aefd05dd22a56e1c1b853c51c4bf9",
+            "pidHash": "ky1exagj70TdnWaR",
+            "nodeName": "系统稳定性及其充要条件",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 1,
+            "sort": 1,
+            "children": null
+          },
+          {
+            "idHash": "aOB7MybK36I9N0Ay",
+            "idStr": "c26253206c6c24af7f80b1363ac178b8",
+            "pidHash": "ky1exagj70TdnWaR",
+            "nodeName": "代数稳定性判据",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 2,
+            "children": null
+          },
+          {
+            "idHash": "RjBNRl782LsJgr77",
+            "idStr": "9cfa42a1dc77ccb7a73c005a99f67161",
+            "pidHash": "ky1exagj70TdnWaR",
+            "nodeName": "乃奎斯特稳定性判据",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" },
+              { "name": "难点", "value": "12" }
+            ],
+            "freeExam": 0,
+            "sort": 3,
+            "children": null
+          },
+          {
+            "idHash": "pxjpzM52r1UM3dmZ",
+            "idStr": "f03610c29927ed67bfa5631a87dd89e3",
+            "pidHash": "ky1exagj70TdnWaR",
+            "nodeName": "乃奎斯特稳定性判据应用于最小相位系统",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 4,
+            "children": null
+          },
+          {
+            "idHash": "NWBoN91Dlqf0ezk9",
+            "idStr": "0481e1ce6d299bf574c85b8ac2443b73",
+            "pidHash": "ky1exagj70TdnWaR",
+            "nodeName": "应用乃奎斯特稳定性判据分析延时系统的稳定性",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 5,
+            "children": null
+          },
+          {
+            "idHash": "v8olga6Bxdu3eEKl",
+            "idStr": "c5e6c6e02dc070f52c5d8397b96c6e4f",
+            "pidHash": "ky1exagj70TdnWaR",
+            "nodeName": "伯德判据",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 1,
+            "sort": 6,
+            "children": null
+          },
+          {
+            "idHash": "pxjpzM52r1UM3bj0",
+            "idStr": "240952a1c4811fd683cf9f35c5b9c7fe",
+            "pidHash": "ky1exagj70TdnWaR",
+            "nodeName": "控制系统的相对稳定性",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 1,
+            "sort": 7,
+            "children": null
+          }
+        ]
+      },
+      {
+        "idHash": "zWk8waAEKGfb21OW",
+        "idStr": "e6aef43d303e4b9890f8cc95b8ab0c95",
+        "pidHash": null,
+        "nodeName": "控制系统的误差分析和计算",
+        "attrs": [{ "name": "主题", "value": "01" }],
+        "freeExam": 0,
+        "sort": 6,
+        "children": [
+          {
+            "idHash": "OgvLMkWe3GSqNyKD",
+            "idStr": "8e9cefe47a66bf96d85903ab0f27d4f4",
+            "pidHash": "8RM30brEvAUv82nW",
+            "nodeName": "误差传递函数与稳态误差",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 1,
+            "children": null
+          },
+          {
+            "idHash": "EbMp0jxDz1u2GbKN",
+            "idStr": "84d973d083f1e62302ffef696ab21603",
+            "pidHash": "8RM30brEvAUv82nW",
+            "nodeName": "静态误差系数",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 1,
+            "sort": 2,
+            "children": null
+          },
+          {
+            "idHash": "2RM60or8vjUrEdao",
+            "idStr": "a15948eac0ef39a69ed3d8203fa96ea8",
+            "pidHash": "zWk8waAEKGfb21OW",
+            "nodeName": "干扰引起的稳态误差",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 1,
+            "sort": 3,
+            "children": null
+          },
+          {
+            "idHash": "1RML0erzvEUqgaZy",
+            "idStr": "034df839f31ebc7029fd40e237342e42",
+            "pidHash": "zWk8waAEKGfb21OW",
+            "nodeName": "误差补偿方法",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 1,
+            "sort": 4,
+            "children": null
+          },
+          {
+            "idHash": "EbMp0jxDz1u2G1Qo",
+            "idStr": "df600a6de2d0b205d7965c4864aba2c7",
+            "pidHash": "zWk8waAEKGfb21OW",
+            "nodeName": "稳态误差的基本概念",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 1,
+            "sort": 1,
+            "children": null
+          },
+          {
+            "idHash": "eg3yMdzqbJSaNA39",
+            "idStr": "b5328e74b4ead4206a546120149ad85d",
+            "pidHash": "zWk8waAEKGfb21OW",
+            "nodeName": "动态误差系数",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 1,
+            "sort": 5,
+            "children": null
+          }
+        ]
+      },
+      {
+        "idHash": "6RMb0krpj6U8j9Aj",
+        "idStr": "001328e82ca7f29a4ff8c7f290dc51a7",
+        "pidHash": null,
+        "nodeName": "控制系统的综合与校正",
+        "attrs": [{ "name": "主题", "value": "01" }],
+        "freeExam": 0,
+        "sort": 7,
+        "children": [
+          {
+            "idHash": "9RMK0lLvprUDZL6A",
+            "idStr": "b6296a363119ad4b2c518a5ed895c5cf",
+            "pidHash": "6RMb0krpj6U8j9Aj",
+            "nodeName": "系统的性能指标",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 1,
+            "sort": 1,
+            "children": null
+          },
+          {
+            "idHash": "rl5AOaQjW7uz59GN",
+            "idStr": "a2b60a14c13d92985b529e0dd97b0007",
+            "pidHash": "6RMb0krpj6U8j9Aj",
+            "nodeName": "超前校正",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 2,
+            "children": null
+          },
+          {
+            "idHash": "G3Bo05lpQ7cdwnla",
+            "idStr": "9d57175dfe7ab46bdfeada0947ced878",
+            "pidHash": "6RMb0krpj6U8j9Aj",
+            "nodeName": "滞后校正",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 3,
+            "children": null
+          },
+          {
+            "idHash": "RjBNRl782LsJgrG7",
+            "idStr": "5d8abd4d4257c43e15b1c681f11ff8e3",
+            "pidHash": "M1Rg062ybDCQ0xyj",
+            "nodeName": "比例控制器（P调节）",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 1,
+            "children": null
+          },
+          {
+            "idHash": "pxjpzM52r1UM3dZZ",
+            "idStr": "6bc8da6ed2c015e2a6d66371c12420a9",
+            "pidHash": "M1Rg062ybDCQ0xyj",
+            "nodeName": "积分控制器（I调节）",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 2,
+            "children": null
+          },
+          {
+            "idHash": "NWBoN91Dlqf0ezl9",
+            "idStr": "3ca194aadcab3d3c05531fb1bcec8234",
+            "pidHash": "M1Rg062ybDCQ0xyj",
+            "nodeName": "微分控制器（D调节）",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 3,
+            "children": null
+          },
+          {
+            "idHash": "v8olga6Bxdu3eE2l",
+            "idStr": "61f25fca96efa5499dd1f88b955dc1b1",
+            "pidHash": "M1Rg062ybDCQ0xyj",
+            "nodeName": " 比例－积分－微分控制器（PID调节）",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 4,
+            "children": null
+          },
+          {
+            "idHash": "VQBNM8yELxUqxkOJ",
+            "idStr": "a24124d9b14c15cc86d0a64441cfa659",
+            "pidHash": "M1Rg062ybDCQ0xyj",
+            "nodeName": "确定PID参数的其他方法",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 5,
+            "children": null
+          },
+          {
+            "idHash": "x26K7pkWlDtKwLeD",
+            "idStr": "24824016c8bd9732c40e744dad4a8113",
+            "pidHash": "6RMb0krpj6U8j9Aj",
+            "nodeName": "利用反馈校正改变局部结构和参数",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 1,
+            "sort": 6,
+            "children": null
+          },
+          {
+            "idHash": "EbMp0jxDz1u2Gb3N",
+            "idStr": "89d5c5a813b20380061747df8b3395e4",
+            "pidHash": "g7zWM9Om3ahQwymW",
+            "nodeName": "二阶最优模型",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 1,
+            "children": null
+          },
+          {
+            "idHash": "7RMl0xLg9kUjlo58",
+            "idStr": "9e2b54f334f3cb07276d42ab98e2be7e",
+            "pidHash": "g7zWM9Om3ahQwymW",
+            "nodeName": "高阶最优模型",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 1,
+            "sort": 2,
+            "children": null
+          },
+          {
+            "idHash": "j52qMaW8GvhWeG6N",
+            "idStr": "78afb48d19cbf6373f86d6df23d7291a",
+            "pidHash": "g7zWM9Om3ahQwymW",
+            "nodeName": "希望对数频率特性与系统性能指标的关系",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" },
+              { "name": "难点", "value": "12" }
+            ],
+            "freeExam": 0,
+            "sort": 3,
+            "children": null
+          },
+          {
+            "idHash": "wOd3Ean7b9I857aK",
+            "idStr": "54fcfcdeb32256c642fa3bac200a7b84",
+            "pidHash": "g7zWM9Om3ahQwymW",
+            "nodeName": "用希望对数频率特性进行校正装置的设计",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" },
+              { "name": "难点", "value": "12" }
+            ],
+            "freeExam": 1,
+            "sort": 4,
+            "children": null
+          },
+          {
+            "idHash": "wOd3Ean7b9I85oRb",
+            "idStr": "6c5578c7a41fa09233adee8773b0163f",
+            "pidHash": "6RMb0krpj6U8j9Aj",
+            "nodeName": "滞后－超前校正",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" },
+              { "name": "难点", "value": "12" }
+            ],
+            "freeExam": 0,
+            "sort": 4,
+            "children": null
+          }
+        ]
+      },
+      {
+        "idHash": "5RMx09rw1oUdBwlW",
+        "idStr": "202cfed6e8089deec420961bcca15ae0",
+        "pidHash": null,
+        "nodeName": "根轨迹法",
+        "attrs": [{ "name": "主题", "value": "01" }],
+        "freeExam": 0,
+        "sort": 8,
+        "children": [
+          {
+            "idHash": "y19zjaDw3qCQkNR8",
+            "idStr": "542bc1170cb3a525b1201e5822a28447",
+            "pidHash": "5RMx09rw1oUdBwlW",
+            "nodeName": "根轨迹与根轨迹方程",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 1,
+            "sort": 1,
+            "children": null
+          },
+          {
+            "idHash": "ARMz0Wm6nbUBv3yZ",
+            "idStr": "da6945536f4072c217d4c8951f1cce73",
+            "pidHash": "5RMx09rw1oUdBwlW",
+            "nodeName": "绘制根轨迹的基本法则",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 1,
+            "sort": 2,
+            "children": null
+          },
+          {
+            "idHash": "rl5AOaQjW7uz59w8",
+            "idStr": "714fbadf3488b6b81b07dda3dd0d0e40",
+            "pidHash": "5RMx09rw1oUdBwlW",
+            "nodeName": "参量根轨迹的绘制",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" },
+              { "name": "难点", "value": "12" }
+            ],
+            "freeExam": 1,
+            "sort": 3,
+            "children": null
+          },
+          {
+            "idHash": "qbwA8ayQmguRyqQp",
+            "idStr": "34b4693bbb20164f0896f80d43a5ce53",
+            "pidHash": "5RMx09rw1oUdBwlW",
+            "nodeName": "系统的闭环零极点分布与性能指标",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 1,
+            "sort": 4,
+            "children": null
+          }
+        ]
+      },
+      {
+        "idHash": "G3Bo05lpQ7cdwn7y",
+        "idStr": "2fd816bdccf22d09c147a24a8895f413",
+        "pidHash": null,
+        "nodeName": "时域瞬态响应分析",
+        "attrs": [{ "name": "主题", "value": "01" }],
+        "freeExam": 0,
+        "sort": 3,
+        "children": [
+          {
+            "idHash": "J8B20nzL1eu3ykWG",
+            "idStr": "df2b62d9cd29b351faa5d40325b76103",
+            "pidHash": "G3Bo05lpQ7cdwn7y",
+            "nodeName": "机电控制系统里的典型输入信号函数",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 1,
+            "children": null
+          },
+          {
+            "idHash": "L2Bk0dOnx9twB0L1",
+            "idStr": "9fbbc1bd3c28fb12f3036e2fbe52f72f",
+            "pidHash": "G3Bo05lpQ7cdwn7y",
+            "nodeName": "一阶系统的瞬态响应",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 2,
+            "children": null
+          },
+          {
+            "idHash": "y19zjaDw3qCQk9QB",
+            "idStr": "fb3f070c09c6de7de7494ec6f96109d4",
+            "pidHash": "G3Bo05lpQ7cdwn7y",
+            "nodeName": "二阶系统的瞬态响应",
+            "attrs": [
+              { "name": "知识点", "value": "05" },
+              { "name": "重点", "value": "11" }
+            ],
+            "freeExam": 0,
+            "sort": 3,
+            "children": null
+          },
+          {
+            "idHash": "dWlpMoKOxrfRwvRw",
+            "idStr": "fe84fd717841d850c50b1dd7bf3da957",
+            "pidHash": "G3Bo05lpQ7cdwn7y",
+            "nodeName": "高阶系统的瞬态响应",
+            "attrs": [{ "name": "知识点", "value": "05" }],
+            "freeExam": 1,
+            "sort": 4,
+            "children": null
+          }
+        ]
+      }
+    ]
+  },
+  "errorParam": null
+}
