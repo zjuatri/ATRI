@@ -57,10 +57,19 @@ function detectInputElements() {
 
 // 在考试页面自动答题
 async function autoAnswerInExamPage() {
+  // 防止重复执行
+  if (window._isAnswering) {
+    console.log('⚠️ [autoAnswer] 答题流程正在执行中，跳过重复调用');
+    return;
+  }
+  
   if (!window.isAutoAnswering) {
     console.log('⏸️ 自动答题已停止');
     return;
   }
+  
+  // 设置执行标志
+  window._isAnswering = true;
   
   console.log(`📝 [autoAnswer] 开始答题流程，当前计数器: ${window.answerCounter}`);
   console.log(`📊 [autoAnswer] 当前题目数据: ${window.currentExamQuestions?.length || 0} 题`);
@@ -411,6 +420,8 @@ function clickSubmitButton() {
       if (isPageType('pointOfMastery', currentUrl)) {
         console.log('✅ [submit] 检测到跳转到 pointOfMastery 页面');
         clearInterval(checkPageChange);
+        // 清除答题执行标志
+        window._isAnswering = false;
         
         // 等待页面加载完成后处理
         setTimeout(() => {
@@ -425,11 +436,15 @@ function clickSubmitButton() {
       } else if (isPageType('examAnalysis', currentUrl)) {
         console.log('✅ [submit] 检测到跳转到 examAnalysis 页面');
         clearInterval(checkPageChange);
+        // 清除答题执行标志
+        window._isAnswering = false;
         // examAnalysis 页面会通过拦截器自动处理
         
       } else if (checkCount >= maxChecks) {
         console.warn('⚠️ [submit] 页面未跳转，停止检查');
         clearInterval(checkPageChange);
+        // 清除答题执行标志
+        window._isAnswering = false;
       }
     }, 500);
     
@@ -467,6 +482,7 @@ async function startAutoAnswering() {
 async function stopAutoAnswering() {
   console.log('⏸️ [stop] 停止自动刷题');
   window.isAutoAnswering = false;
+  window._isAnswering = false; // 清除执行标志
   window.answerCounter = 1;
   window.currentExamQuestions = []; // 清空题目列表
   

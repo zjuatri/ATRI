@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "ZhiHuiShu Extension",
-  "version": "1.0.0",
-  "description": "智慧树浏览器插件",
+  "name": "ATRI",
+  "version": "1.0.1",
+  "description": "高性能智慧树助手",
   "icons": {
     "64": "icons/64.png",
     "128": "icons/128.png",
