@@ -1,5 +1,97 @@
 ﻿// 页面处理模块 - 处理不同页面的特定逻辑
 
+// 生成所有可能的多选组合，按选项数量从多到少排序（返回数组格式）
+// 例如5个选项：全选(5个) -> 4个的组合 -> 3个的组合 -> 2个的组合
+function generateAllCombinations(optionCount) {
+  const allCombinations = [];
+  
+  // 从全选开始（optionCount个），到至少选2个
+  for (let selectCount = optionCount; selectCount >= 2; selectCount--) {
+    const combinations = getCombinations(optionCount, selectCount);
+    allCombinations.push(...combinations);
+  }
+  
+  return allCombinations;
+}
+
+// 获取从n个选项中选k个的所有组合（返回数组格式）
+function getCombinations(n, k) {
+  const result = [];
+  const combination = [];
+  
+  function backtrack(start) {
+    if (combination.length === k) {
+      // 保存为数组而不是字符串
+      result.push([...combination]);
+      return;
+    }
+    
+    for (let i = start; i <= n; i++) {
+      combination.push(i);
+      backtrack(i + 1);
+      combination.pop();
+    }
+  }
+  
+  backtrack(1);
+  return result;
+}
+
+// 比较两个数组是否相等
+function arraysEqual(a, b) {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) return false;
+  }
+  return true;
+}
+
+// 多选题枚举逻辑：按组合顺序枚举（使用数组格式）
+// 策略：全选 -> 所有4选组合 -> 所有3选组合 -> 所有2选组合
+// 例如5个选项的枚举顺序：
+// [1,2,3,4,5] (全选5个)
+// [1,2,3,4], [1,2,3,5], [1,2,4,5], [1,3,4,5], [2,3,4,5] (4个的组合，共5种)
+// [1,2,3], [1,2,4], [1,2,5], [1,3,4], [1,3,5], [1,4,5], [2,3,4], [2,3,5], [2,4,5], [3,4,5] (3个的组合，共10种)
+// [1,2], [1,3], [1,4], [1,5], [2,3], [2,4], [2,5], [3,4], [3,5], [4,5] (2个的组合，共10种)
+function getNextMultipleChoiceAnswer(currentAnswer, optionCount) {
+  // currentAnswer 是数组如 [1,2,3,4,5] 表示选了1,2,3,4,5
+  // optionCount 是选项总数
+  
+  if (!currentAnswer || currentAnswer.length === 0) {
+    // 空答案，返回全选
+    return Array.from({length: optionCount}, (_, i) => i + 1);
+  }
+  
+  // 生成所有可能的组合
+  const allCombinations = generateAllCombinations(optionCount);
+  
+  // 找到当前答案在列表中的位置
+  let currentIndex = -1;
+  for (let i = 0; i < allCombinations.length; i++) {
+    if (arraysEqual(allCombinations[i], currentAnswer)) {
+      currentIndex = i;
+      break;
+    }
+  }
+  
+  if (currentIndex === -1) {
+    // 当前答案不在列表中（可能是初始状态），返回第一个组合（全选）
+    console.warn(`⚠️ 当前答案 [${currentAnswer}] 不在枚举列表中，返回全选`);
+    return allCombinations[0];
+  }
+  
+  if (currentIndex === allCombinations.length - 1) {
+    // 已经是最后一个组合，循环回第一个（全选）
+    console.log(`🔄 已枚举完所有组合（共${allCombinations.length}个），循环回全选`);
+    return allCombinations[0];
+  }
+  
+  // 返回下一个组合
+  const nextAnswer = allCombinations[currentIndex + 1];
+  console.log(`📊 枚举进度: ${currentIndex + 1}/${allCombinations.length} -> ${currentIndex + 2}/${allCombinations.length}`);
+  return nextAnswer;
+}
+
 // 查找并点击下一个未完成的题目（mastery 页面）
 function findAndClickNextUncompleted() {
   // 确保在 mastery 页面
@@ -11,6 +103,13 @@ function findAndClickNextUncompleted() {
   
   const customContentDivs = document.querySelectorAll('div.custom-content');
   console.log('🔍 找到 custom-content div 数量:', customContentDivs.length);
+  
+  // 如果找不到 custom-content div，说明页面未加载完成，刷新页面
+  if (customContentDivs.length === 0) {
+    console.log('⚠️ 未找到 custom-content div，页面可能未加载完成，刷新页面...');
+    location.reload();
+    return false;
+  }
   
   for (let i = 0; i < customContentDivs.length; i++) {
     const div = customContentDivs[i];
@@ -93,10 +192,10 @@ function handlePointOfMasteryPage() {
   const isComplete = rateText.includes('100') && rateText.includes('%');
   console.log('📊 [pointOfMastery] 是否完成 100%:', isComplete);
   
-  // 如果进度是 100%，点击 backup 返回 mastery 页面
+  // 如果进度是 100%，点击 backup-icon 返回 mastery 页面
   if (isComplete) {
     console.log('🎉 进度已达 100%，点击返回按钮');
-    const backupDiv = document.querySelector('div.backup');
+    const backupDiv = document.querySelector('div.backup-icon');
     
     if (backupDiv) {
       backupDiv.click();
@@ -110,16 +209,26 @@ function handlePointOfMasteryPage() {
           window.answerCounter = 1;
           window.currentExamQuestions = [];
           
-          // 等待页面加载完成
+          // 等待页面加载完成后再查找未完成题目
           setTimeout(() => {
             if (window.isAutoAnswering) {
-              findAndClickNextUncompleted();
+              // 检查是否真的在 mastery 页面
+              if (isPageType('mastery')) {
+                findAndClickNextUncompleted();
+              } else {
+                console.log('⚠️ 页面尚未跳转到 mastery，再等待一段时间...');
+                setTimeout(() => {
+                  if (window.isAutoAnswering && isPageType('mastery')) {
+                    findAndClickNextUncompleted();
+                  }
+                }, 2000);
+              }
             }
           }, 2000);
         }
       }, 2000);
     } else {
-      console.error('❌ 未找到 backup 按钮');
+      console.error('❌ 未找到 backup-icon 按钮');
       if (window.stopAutoAnswering) window.stopAutoAnswering();
     }
   } else {
@@ -267,27 +376,82 @@ function handleUserAnswersData(data) {
     console.log('📝 准备更新错误答案...');
     console.log('📋 当前题库文件名:', window.currentExamParams?.fileName);
     
-    // 为每个错题更新答案
-    // 注意：answer 是选项的 id（字符串），不是数字
-    // 我们需要从选项列表中找到当前答案的 sort，然后 +1
+    // 为每个错题更新答案（统一使用数组格式）
     const updateList = wrongQuestions.map(q => {
-      const currentAnswerId = q.userAnswerVo.answer;
-      const currentOption = q.optionVos.find(opt => opt.id.toString() === currentAnswerId.toString());
-      const currentSort = currentOption ? currentOption.sort : 1;
-      const newSort = currentSort >= q.optionVos.length ? 1 : currentSort + 1;
+      const questionType = q.questionType;
+      const currentAnswerIds = q.userAnswerVo.answer; // 可能是单个ID或多个ID（逗号分隔）
+      const optionCount = q.optionVos.length;
       
-      return {
-        questionId: q.questionId,
-        currentAnswer: currentSort,
-        newAnswer: newSort
-      };
+      // 判断是单选还是多选
+      // questionType: 1=单选, 2=多选, 14=判断题(也是单选)
+      const isMultipleChoice = questionType === 2;
+      
+      if (isMultipleChoice) {
+        // 多选题：解析当前答案，获取下一个枚举组合
+        console.log(`  📊 多选题 ${q.questionId}: 当前答案ID=${currentAnswerIds}, 选项数=${optionCount}`);
+        
+        // 将答案ID转换为序号数组
+        const answerIdArray = currentAnswerIds.split(',').map(id => id.trim());
+        const currentSorts = answerIdArray.map(answerId => {
+          const opt = q.optionVos.find(o => o.id.toString() === answerId);
+          return opt ? opt.sort : null;
+        }).filter(s => s !== null).sort((a, b) => a - b);
+        
+        // currentSorts 已经是数组格式 [1, 2, 3, 4, 5]
+        const currentAnswer = currentSorts;
+        
+        // 生成所有可能的组合（用于显示总数）
+        const allCombinations = generateAllCombinations(optionCount);
+        const totalCombinations = allCombinations.length;
+        
+        // 找到当前答案的索引
+        let currentIndex = -1;
+        for (let i = 0; i < allCombinations.length; i++) {
+          if (arraysEqual(allCombinations[i], currentAnswer)) {
+            currentIndex = i;
+            break;
+          }
+        }
+        
+        console.log(`    📊 枚举信息: 共${totalCombinations}种组合, 当前第${currentIndex + 1}个`);
+        console.log(`    💡 组合示例（前5个）:`, allCombinations.slice(0, 5).map(arr => `[${arr}]`).join(', '));
+        
+        // 获取下一个枚举答案
+        const newAnswer = getNextMultipleChoiceAnswer(currentAnswer, optionCount);
+        
+        console.log(`    ✅ 当前组合: [${currentAnswer}] → 下一个: [${newAnswer}]`);
+        
+        return {
+          questionId: q.questionId,
+          currentAnswer: currentAnswer,  // 数组格式
+          newAnswer: newAnswer,          // 数组格式
+          questionType: questionType
+        };
+      } else {
+        // 单选题：找到当前答案的序号，然后 +1（使用数组格式）
+        const currentOption = q.optionVos.find(opt => opt.id.toString() === currentAnswerIds.toString());
+        const currentSort = currentOption ? currentOption.sort : 1;
+        const newSort = currentSort >= optionCount ? 1 : currentSort + 1;
+        
+        return {
+          questionId: q.questionId,
+          currentAnswer: [currentSort],  // 数组格式
+          newAnswer: [newSort],          // 数组格式
+          questionType: questionType
+        };
+      }
     });
     
     console.log('📝 更新列表:', updateList);
     
     wrongQuestions.forEach((q, index) => {
       const update = updateList[index];
-      console.log(`  ${index + 1}. 题目 ${q.questionId}: 当前答案序号 ${update.currentAnswer} → 更新为 ${update.newAnswer}`);
+      if (update.questionType === 2) {
+        console.log(`  ${index + 1}. 题目 ${q.questionId} [多选]: 当前组合 [${update.currentAnswer}] → 更新为 [${update.newAnswer}]`);
+      } else {
+        const typeStr = update.questionType === 14 ? '判断' : '单选';
+        console.log(`  ${index + 1}. 题目 ${q.questionId} [${typeStr}]: 当前答案 [${update.currentAnswer}] → 更新为 [${update.newAnswer}]`);
+      }
     });
     
     // 发送更新请求到 background

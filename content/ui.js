@@ -25,14 +25,15 @@ function createDisplayBox() {
     position: fixed;
     top: 20px;
     left: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%);
+    color: #1e40af;
     padding: 15px 20px;
     border-radius: 12px;
     font-family: 'Segoe UI', system-ui, sans-serif;
     font-size: 14px;
     z-index: 999999;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
+    border: 2px solid #3b82f6;
     cursor: move;
     min-width: 320px;
     backdrop-filter: blur(10px);
@@ -120,34 +121,22 @@ function updateDisplayBoxContent() {
   const hasExamFile = window.currentExamFile !== null;
   
   displayBox.innerHTML = `
-    <div style="margin-bottom: 12px; font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: space-between;">
-      <span>🎓 智慧树助手</span>
-      <span style="font-size: 12px; font-weight: normal; opacity: 0.8;">拖动移动</span>
+    <div style="margin-bottom: 12px; font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: space-between; color: #1e40af;">
+      <span>🎓 ATRI高性能智慧树刷题助手</span>
+      <span style="font-size: 12px; font-weight: normal; opacity: 0.7; color: #3b82f6;">拖动移动</span>
     </div>
     
     ${isStudyPage ? `
-      <div style="margin-bottom: 8px; padding: 8px; background: rgba(255,255,255,0.1); border-radius: 6px;">
-        <div style="font-size: 12px; opacity: 0.9; margin-bottom: 4px;">📍 学习页面</div>
-        ${isMasteryPage ? `<div style="font-size: 11px; opacity: 0.8;">目标按钮: ${buttonStatus}</div>` : ''}
+      <div style="margin-bottom: 8px; padding: 8px; background: rgba(59, 130, 246, 0.1); border-radius: 6px; border: 1px solid rgba(59, 130, 246, 0.2);">
+        <div style="font-size: 12px; opacity: 0.9; margin-bottom: 4px; color: #1e40af;">📍 学习页面</div>
+        ${isMasteryPage ? `<div style="font-size: 11px; opacity: 0.8; color: #1e40af;">目标按钮: ${buttonStatus}</div>` : ''}
       </div>
     ` : ''}
     
-    ${isExamPage ? `
-      <div style="margin-bottom: 8px; padding: 8px; background: rgba(255,255,255,0.1); border-radius: 6px;">
-        <div style="font-size: 12px; opacity: 0.9; margin-bottom: 4px;">📝 考试页面</div>
-        ${window.currentExamParams ? `
-          <div style="font-size: 11px; opacity: 0.8; margin-top: 4px;">
-            <div>📁 ${window.currentExamParams.fileName}</div>
-            ${hasSecretStr ? `<div style="margin-top: 2px;">🔑 secretStr: ${window.currentSecretStr.substring(0, 20)}...</div>` : ''}
-          </div>
-        ` : '<div style="font-size: 11px; opacity: 0.7;">未检测到考试参数</div>'}
-      </div>
-    ` : ''}
-    
-    ${window.detectedInputs && window.detectedInputs.length > 0 ? `
-      <div style="margin-bottom: 8px; padding: 8px; background: rgba(255,255,255,0.1); border-radius: 6px;">
-        <div style="font-size: 12px; opacity: 0.9;">🎯 检测到 ${window.detectedInputs.length} 个输入框</div>
-        <div style="font-size: 11px; opacity: 0.7; margin-top: 4px;">
+    ${!isExamPage && window.detectedInputs && window.detectedInputs.length > 0 ? `
+      <div style="margin-bottom: 8px; padding: 8px; background: rgba(59, 130, 246, 0.1); border-radius: 6px; border: 1px solid rgba(59, 130, 246, 0.2);">
+        <div style="font-size: 12px; opacity: 0.9; color: #1e40af;">🎯 检测到 ${window.detectedInputs.length} 个输入框</div>
+        <div style="font-size: 11px; opacity: 0.7; margin-top: 4px; color: #1e40af;">
           ${window.detectedInputs.slice(0, 3).map(input => 
             `<div>• ${input.type}: ${input.name || input.id || '未命名'}</div>`
           ).join('')}
@@ -157,9 +146,9 @@ function updateDisplayBoxContent() {
     ` : ''}
     
     ${window.isAutoAnswering ? `
-      <div style="margin-top: 8px; padding: 8px; background: rgba(74, 222, 128, 0.2); border-radius: 6px; border: 1px solid rgba(74, 222, 128, 0.3);">
-        <div style="font-size: 12px; font-weight: 600;">🤖 自动答题中...</div>
-        <div style="font-size: 11px; opacity: 0.8; margin-top: 4px;">
+      <div style="margin-top: 8px; padding: 8px; background: rgba(34, 197, 94, 0.15); border-radius: 6px; border: 1px solid rgba(34, 197, 94, 0.3);">
+        <div style="font-size: 12px; font-weight: 600; color: #15803d;">🤖 自动答题中...</div>
+        <div style="font-size: 11px; opacity: 0.8; margin-top: 4px; color: #15803d;">
           当前进度: ${window.answerCounter || 0} / ${window.currentExamQuestions?.length || 0}
         </div>
       </div>
@@ -182,12 +171,12 @@ function updateDisplayBoxContent() {
       </div>
     ` : ''}
     
-    ${isMasteryPage ? `
+    ${isMasteryPage && !window.isAutoAnswering ? `
       <div style="margin-top: 12px;">
         <button id="autoAnswerToggleBtn" style="
           width: 100%;
           padding: 10px;
-          background: ${window.isAutoAnswering ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)' : 'linear-gradient(135deg, #10b981 0%, #059669 100%)'};
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
           color: white;
           border: none;
           border-radius: 8px;
@@ -197,12 +186,12 @@ function updateDisplayBoxContent() {
           transition: all 0.3s ease;
           box-shadow: 0 2px 8px rgba(0,0,0,0.2);
         " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-          ${window.isAutoAnswering ? '⏸️ 停止刷题' : '🚀 开始刷题'}
+          🚀 开始刷题
         </button>
       </div>
     ` : ''}
     
-    <div style="margin-top: 12px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.2);">
+    <div style="margin-top: 12px; padding-top: 8px; border-top: 1px solid rgba(59, 130, 246, 0.3);">
       <button id="showAnswersBtn" style="
         width: 100%;
         padding: 8px;
@@ -215,14 +204,28 @@ function updateDisplayBoxContent() {
         cursor: pointer;
         transition: all 0.3s ease;
         box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        margin-bottom: 6px;
       " onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
         📋 显示答案 JSON
       </button>
+      
+      <button id="clearAllAnswersBtn" style="
+        width: 100%;
+        padding: 8px;
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      " onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+        🗑️ 清空所有题库
+      </button>
     </div>
-    
-    <div style="margin-top: 8px; font-size: 11px; opacity: 0.7; text-align: center;">
-      按 Ctrl+Shift+K 打开控制台查看日志
-    </div>
+
   `;
   
   // 绑定停止按钮事件（在所有页面，当正在答题时）
@@ -238,19 +241,13 @@ function updateDisplayBoxContent() {
     }
   }
   
-  // 绑定开始/停止切换按钮事件（仅在 mastery 页面）
-  if (isMasteryPage) {
+  // 绑定开始刷题按钮事件（仅在 mastery 页面且未在答题时）
+  if (isMasteryPage && !window.isAutoAnswering) {
     const toggleBtn = displayBox.querySelector('#autoAnswerToggleBtn');
     if (toggleBtn) {
       toggleBtn.addEventListener('click', () => {
-        if (window.isAutoAnswering) {
-          if (window.stopAutoAnswering) {
-            window.stopAutoAnswering();
-          }
-        } else {
-          if (window.startAutoAnswering) {
-            window.startAutoAnswering();
-          }
+        if (window.startAutoAnswering) {
+          window.startAutoAnswering();
         }
       });
     }
@@ -264,6 +261,50 @@ function updateDisplayBoxContent() {
       showAnswersJSON();
     });
   }
+  
+  // 绑定清空所有题库按钮事件（所有页面）
+  const clearAllBtn = displayBox.querySelector('#clearAllAnswersBtn');
+  if (clearAllBtn) {
+    clearAllBtn.addEventListener('click', () => {
+      console.log('🗑️ 用户点击清空所有题库按钮');
+      clearAllAnswers();
+    });
+  }
+}
+
+// 清空所有题库
+function clearAllAnswers() {
+  // 确认对话框
+  const confirmed = confirm('⚠️ 确定要清空所有题库吗？\n\n这将删除所有已保存的答案数据，此操作无法撤销！');
+  
+  if (!confirmed) {
+    console.log('❌ 用户取消了清空操作');
+    return;
+  }
+  
+  console.log('🗑️ 开始清空所有题库...');
+  
+  // 发送清空请求到 background
+  safeSendMessage({
+    action: 'clearAllExams'
+  }).then(response => {
+    if (response && response.success) {
+      console.log(`✅ 所有题库已清空，共清空 ${response.clearedCount || 0} 个文件`);
+      showNotification(`✅ 已清空 ${response.clearedCount || 0} 个题库`, 'success');
+      
+      // 清空本地缓存
+      window.currentExamFile = null;
+      
+      // 更新显示
+      updateDisplayBoxContent();
+    } else {
+      console.error('❌ 清空题库失败:', response);
+      showNotification('❌ 清空题库失败', 'error');
+    }
+  }).catch(err => {
+    console.error('❌ 清空题库请求失败:', err);
+    showNotification('❌ 清空题库失败', 'error');
+  });
 }
 
 // 显示答案 JSON

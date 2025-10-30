@@ -4,16 +4,18 @@
   "version": "1.0.0",
   "description": "智慧树浏览器插件",
   "icons": {
-    "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
+    "64": "icons/64.png",
+    "128": "icons/128.png",
+    "256": "icons/256.png",
+    "512": "icons/512.png"
   },
   "action": {
     "default_popup": "popup/popup.html",
     "default_icon": {
-      "16": "icons/icon16.png",
-      "48": "icons/icon48.png",
-      "128": "icons/icon128.png"
+      "64": "icons/64.png",
+      "128": "icons/128.png",
+      "256": "icons/256.png",
+      "512": "icons/512.png"
     }
   },
   "background": {
@@ -36,12 +38,7 @@
       "run_at": "document_start"
     }
   ],
-  "permissions": [
-    "storage",
-    "activeTab",
-    "webRequest",
-    "downloads"
-  ],
+  "permissions": ["storage", "activeTab", "webRequest", "downloads"],
   "host_permissions": [
     "https://studywisdomh5.zhihuishu.com/*",
     "https://fusioncourseh5.zhihuishu.com/*",

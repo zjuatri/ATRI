@@ -1,84 +1,309 @@
-# ZhiHuiShu 浏览器插件
+# ATRI: Automated Task Repetition Instrument
 
-智慧树浏览器扩展插件
+**高性能智慧树刷题助手**
 
-## 项目结构
+一个基于 Chrome Manifest V3 的智慧树平台自动刷题浏览器扩展，采用模块化架构设计，支持智能答题、错题枚举、题库管理等功能。
+
+---
+
+## ✨ 核心特性
+
+### 🎯 智能答题系统
+- **自动答题**：智能识别题型（单选/多选/判断），自动填写答案
+- **题库记忆**：基于 `examId` 自动保存和加载历史答案
+- **错题枚举**：多选题答错时自动进行组合枚举（n选→n-1选→...→2选）
+- **进度追踪**：实时显示答题进度和枚举状态
+
+### 🔄 全流程自动化
+- **多页面支持**：
+  - `mastery` 页面：自动查找未完成题目
+  - `pointOfMastery` 页面：检测完成度，自动返回
+  - `exam` 页面：参数提取与自动答题
+  - `examAnalysis` 页面：答案更新与错题处理
+- **智能导航**：100% 完成后自动返回，继续下一题目
+- **断线重连**：页面刷新后自动恢复状态
+
+### 🛠️ 用户界面
+- **悬浮控制面板**：可拖拽的浮动窗口，实时显示状态
+- **一键操作**：启动/停止、清空题库、查看当前状态
+- **通知系统**：彩色通知提示（成功/警告/错误）
+- **深色模式适配**：支持智慧树平台深色模式
+
+---
+
+## 📁 项目结构
 
 ```
 ZhiHuiShu/
-├── manifest.json          # 插件配置文件
-├── background/            # 后台脚本
-│   └── background.js
-├── content/               # 内容脚本
-│   └── content.js
-├── popup/                 # 弹出页面
+├── manifest.json              # Manifest V3 配置文件
+├── background/                # 后台服务
+│   └── background.js         # Service Worker，题库存储管理
+├── content/                   # 内容脚本（模块化架构）
+│   ├── content-main.js       # 主入口，页面监听与路由
+│   ├── utils.js              # 工具函数（页面类型判断等）
+│   ├── interceptor.js        # 网络请求拦截器
+│   ├── page-interceptor.js   # 页面数据拦截与解析
+│   ├── page-handlers.js      # 页面处理器（mastery/pointOfMastery）
+│   ├── auto-answer.js        # 自动答题核心逻辑
+│   └── ui.js                 # 用户界面组件
+├── popup/                     # 弹出页面
 │   ├── popup.html
 │   ├── popup.css
 │   └── popup.js
-└── icons/                 # 图标文件
-    ├── icon16.png
-    ├── icon48.png
-    └── icon128.png
+├── icons/                     # 图标资源
+└── data/                      # 数据存储目录
 ```
 
-## 功能说明
+---
 
-- **manifest.json**: 插件的配置文件，定义了插件的基本信息、权限和组件
-- **background/**: 后台服务工作线程，处理跨页面的逻辑
-- **content/**: 内容脚本，注入到网页中执行
-- **popup/**: 点击插件图标时显示的弹出页面
+## 🚀 安装与使用
 
-## 安装方法
+### 安装方法
 
-1. 打开 Chrome/Edge 浏览器
-2. 访问 `chrome://extensions/` 或 `edge://extensions/`
-3. 打开右上角的"开发者模式"
-4. 点击"加载已解压的扩展程序"
-5. 选择本项目文件夹
+1. 下载或克隆本项目
+   ```bash
+   git clone https://github.com/zjuatri/ZhiHuiShu.git
+   ```
 
-## 开发说明
+2. 打开 Chrome/Edge 浏览器
 
-### Manifest V3
-本插件使用 Manifest V3 规范，这是 Chrome 扩展的最新标准。
+3. 访问扩展管理页面：
+   - Chrome: `chrome://extensions/`
+   - Edge: `edge://extensions/`
 
-### 主要组件
+4. 开启右上角的 **"开发者模式"**
 
-1. **Service Worker (background.js)**
-   - 处理后台任务
-   - 监听事件
-   - 管理状态
+5. 点击 **"加载已解压的扩展程序"**
 
-2. **Content Script (content.js)**
-   - 注入到网页中
-   - 可以访问和修改 DOM
-   - 与页面脚本隔离
+6. 选择项目根目录（包含 `manifest.json` 的文件夹）
 
-3. **Popup (popup.html/js/css)**
-   - 用户界面
-   - 与用户交互
-   - 可以与 content script 和 background 通信
+### 使用指南
 
-## 开发计划
+1. **访问智慧树平台**
+   - 支持域名：
+     - `studywisdomh5.zhihuishu.com`
+     - `fusioncourseh5.zhihuishu.com`
 
-- [ ] 添加图标文件
-- [ ] 实现具体功能
-- [ ] 添加选项页面
-- [ ] 完善用户界面
-- [ ] 添加测试
+2. **启动自动刷题**
+   - 在任意支持的页面点击悬浮窗中的 **"🚀 开始自动刷题"** 按钮
+   - 或在 `mastery` 页面启动，自动查找未完成题目
 
-## 许可证
+3. **查看进度**
+   - 悬浮窗实时显示当前状态：
+     - 空闲中 / 自动答题中
+     - 当前答案、枚举进度
+     - 答题序号
 
-MIT
+4. **清空题库**
+   - 点击 **"🗑️ 清空所有题库"** 按钮
+   - 确认后清除所有已保存的答案数据
 
-## 使用接口：
-题目
-https://studywisdomh5.zhihuishu.com/exam?knowledgeId=x26K7nlDxLcKqZJa&recruitAndCourseId=495f595c41504859444a58595845584359
+---
 
-- recruitAndCourseId=495f595c41504859444a58595845584359：课程相关ID
-- knowledgeId=x26K7nlDxLcKqZJa：知识点ID
-- secretStr=au+C2IRNmIXjLMkr/PYInWDjr5AfyExr1t3Bll68xLRfzNKYN5/nVAb7RtVvA9Q8eFn6MYpHQopLu/uFNCHBGnhLhAr6PjwvW1dpfrbj0hE=:鉴权
+## 🔧 技术架构
 
-答案
-https://aistudy.zhihuishu.com/gateway/t/v1/exam/getUserAnswers?secretStr=m%2BS%2F4vlpjxZRwIy%2FrS5DL7bt%2FrI76btO50klcU6qU8qV5fueUf343oka3Cr8YqPnJ3OWjLzvYNulkjDE3CkBYurAFIzp8DwudUFqldn2uqxUT21agtD0gJn1B23XD7LXzYAM6YEdgUgJrYA8cnv4mQ%3D%3D&dateFormate=1761749259000
-## 逻辑
-截取网络获得鉴权秘钥->反复提交获取正确答案
+### 核心技术栈
+- **Manifest V3**：Chrome 扩展最新标准
+- **Vanilla JavaScript**：无框架依赖，高性能
+- **Chrome Storage API**：持久化题库数据
+- **Fetch/XHR Interception**：网络请求拦截
+
+### 模块化设计
+
+#### 1. **content-main.js** - 主控制器
+- 页面类型识别与路由
+- URL 变化监听（MutationObserver + popstate）
+- 模块生命周期管理
+
+#### 2. **utils.js** - 工具库
+- `isPageType()`: 页面类型判断
+- `extractExamParams()`: 考试参数提取
+- `showNotification()`: 通知显示
+
+#### 3. **interceptor.js** - 网络拦截
+- Fetch/XHR 请求拦截
+- 题目数据提取（`getQuestions` API）
+- 答案数据提取（`getUserAnswers` API）
+
+#### 4. **page-handlers.js** - 页面处理
+- `findAndClickNextUncompleted()`: 查找未完成题目（mastery）
+- `handlePointOfMasteryPage()`: 处理进度检测（pointOfMastery）
+- `getNextEnumerationAnswer()`: 错题枚举算法
+
+#### 5. **auto-answer.js** - 答题引擎
+- `startAutoAnswer()`: 自动答题流程控制
+- `fillAnswerOnly()`: 答案填写（支持单选/多选/判断）
+- 异步顺序点击（防止事件冲突）
+- 答案验证与错误处理
+
+#### 6. **ui.js** - 界面组件
+- 悬浮窗创建与拖拽
+- 状态显示更新
+- 按钮事件绑定
+
+#### 7. **background.js** - 后台服务
+- 题库数据存储（基于 `examId`）
+- 跨页面状态同步
+- 消息通信处理
+
+---
+
+## 📊 工作流程
+
+### 完整答题流程
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  1. mastery 页面                                            │
+│     - 查找未完成题目（custom-content div）                   │
+│     - 点击按钮进入 pointOfMastery                            │
+└─────────────────────┬───────────────────────────────────────┘
+                      ↓
+┌─────────────────────────────────────────────────────────────┐
+│  2. pointOfMastery 页面                                     │
+│     - 检测进度（charts-label-rate）                          │
+│     - 100%: 点击返回 mastery，继续下一题                     │
+│     - <100%: 点击查看分析按钮进入 examAnalysis               │
+└─────────────────────┬───────────────────────────────────────┘
+                      ↓
+┌─────────────────────────────────────────────────────────────┐
+│  3. examAnalysis 页面                                       │
+│     - 拦截 getUserAnswers API 获取答案数据                   │
+│     - 更新题库（正确答案或错题枚举）                          │
+│     - 刷新页面重新进入 exam                                  │
+└─────────────────────┬───────────────────────────────────────┘
+                      ↓
+┌─────────────────────────────────────────────────────────────┐
+│  4. exam 页面                                               │
+│     - 拦截 getQuestions API 获取题目                         │
+│     - 提取 examId 从题库加载答案                             │
+│     - 自动填写答案并提交                                      │
+│     - 等待跳转到 examAnalysis                                │
+└─────────────────────┬───────────────────────────────────────┘
+                      ↓
+                 循环直至 100%
+```
+
+### 错题枚举策略
+
+多选题答错时自动进行组合枚举：
+
+```javascript
+// 示例：5 个选项的多选题
+初始答案: [1, 2, 3, 4, 5]  // 全选
+第 1 次: [1, 2, 3, 4]      // C(5,4) = 5 种组合
+第 2 次: [1, 2, 3]         // C(5,3) = 10 种组合
+第 3 次: [1, 2]            // C(5,2) = 10 种组合
+...
+直到找到正确答案
+```
+
+---
+
+## 🎨 界面说明
+
+### 悬浮控制面板
+
+- **标题栏**：显示 "ATRI 刷题助手" + 当前状态指示灯
+- **状态显示**：
+  - 🔴 空闲中 / 🟢 自动答题中
+  - 当前答案数组
+  - 答题序号
+- **操作按钮**：
+  - 🚀 开始自动刷题（绿色渐变）
+  - ⏸️ 停止自动刷题（橙色渐变）
+  - 🗑️ 清空所有题库（红色渐变）
+
+### 通知提示
+
+- **成功通知**（绿色）：答题完成、题库清空等
+- **警告通知**（橙色）：页面检测、状态提醒等
+- **错误通知**（红色）：元素未找到、操作失败等
+
+---
+
+
+#### 题目数据结构
+```javascript
+{
+  questionId: "123456",           // 题目ID
+  questionType: 1 | 2 | 14,       // 1=单选, 2=多选, 14=判断
+  optionList: [...],              // 选项列表
+  // ...
+}
+```
+
+#### 答案数据结构
+```javascript
+{
+  examId: "exam_123",             // 考试ID（题库键）
+  answerList: [
+    {
+      questionId: "123456",
+      answer: [1, 2, 3]           // 统一数组格式
+    }
+  ]
+}
+```
+
+---
+
+## 🐛 调试与日志
+
+### 日志系统
+
+所有关键操作都有详细日志输出（F12 控制台查看）：
+
+- `🔍` 查找操作
+- `✅` 成功操作
+- `❌` 失败/错误
+- `📊` 数据统计
+- `🔄` 流程状态
+- `⚠️` 警告提示
+
+
+## 🔐 数据存储
+
+### Chrome Storage Local
+
+```javascript
+{
+  "exam_123": {                   // 键：examId
+    "123456": [1, 2],             // 值：questionId -> answer
+    "123457": [1],
+    // ...
+  },
+  "exam_456": { ... }
+}
+```
+
+### 数据清除
+
+- 手动清除：点击悬浮窗 "清空所有题库" 按钮
+- 编程清除：`chrome.storage.local.clear()`
+
+---
+
+## 📄 许可证
+
+MIT License
+
+---
+
+## 👨‍💻 作者
+
+**zjuatri** - [GitHub](https://github.com/zjuatri)
+
+---
+
+## ⚠️ 免责声明
+
+本项目仅供学习交流使用，请勿用于任何商业用途或违反平台规则的行为。使用本工具所产生的任何后果由使用者自行承担。
+
+---
+
+## 🙏 致谢
+
+感谢所有为本项目提供建议和反馈的用户！
+
+如有问题或建议，欢迎提交 Issue 或 Pull Request。

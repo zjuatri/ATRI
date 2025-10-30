@@ -58,11 +58,28 @@ function updateExamQuestions(fileName, questions) {
     
     // 如果题目不存在，添加到文件中
     if (!examFile.questions[questionId]) {
+      // 根据题目类型和选项数量设置默认答案（统一使用数组格式）
+      const questionType = question.questionType || 1;
+      const optionCount = question.optionVos ? question.optionVos.length : 4;
+      let defaultAnswer;
+      
+      // 判断题目类型：1=单选, 2=多选, 14=判断题(单选)
+      if (questionType === 2) {
+        // 多选题：默认全选，数组格式 [1, 2, 3, 4, 5]
+        defaultAnswer = Array.from({length: optionCount}, (_, i) => i + 1);
+        console.log(`  多选题 ${questionId}，默认全选:`, defaultAnswer);
+      } else {
+        // 单选题/判断题：默认选第1项，数组格式 [1]
+        defaultAnswer = [1];
+        const typeStr = questionType === 14 ? '判断题' : '单选题';
+        console.log(`  ${typeStr} ${questionId}，默认选项:`, defaultAnswer);
+      }
+      
       examFile.questions[questionId] = {
         questionId: questionId,
-        answer: 1, // 默认答案为1
+        answer: defaultAnswer,  // 统一使用数组格式
         questionName: question.questionName || '',
-        questionType: question.questionType || null,
+        questionType: questionType,
         options: question.optionVos || [],
         addedAt: new Date().toISOString()
       };
@@ -270,19 +287,21 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       
       if (examFile.questions[questionId]) {
         const currentAnswer = examFile.questions[questionId].answer;
-        console.log(`   当前答案: ${currentAnswer}`);
+        const currentAnswerStr = Array.isArray(currentAnswer) ? `[${currentAnswer}]` : currentAnswer;
+        console.log(`   当前答案: ${currentAnswerStr}`);
         
         // 支持两种更新方式：action='increment' 或 直接提供 newAnswer
         if (newAnswer !== undefined) {
-          // 直接使用提供的新答案
+          // 直接使用提供的新答案（支持数组格式）
           examFile.questions[questionId].answer = newAnswer;
-          console.log(`   ✅ 答案已更新: ${currentAnswer} -> ${newAnswer}`);
+          const newAnswerStr = Array.isArray(newAnswer) ? `[${newAnswer}]` : newAnswer;
+          console.log(`   ✅ 答案已更新: ${currentAnswerStr} -> ${newAnswerStr}`);
           updatedCount++;
         } else if (action === 'increment') {
-          // 答案 +1
+          // 答案 +1（仅用于旧版单选题逻辑）
           const incrementedAnswer = currentAnswer + 1;
           examFile.questions[questionId].answer = incrementedAnswer;
-          console.log(`   ✅ 答案已更新: ${currentAnswer} -> ${incrementedAnswer}`);
+          console.log(`   ✅ 答案已更新: ${currentAnswerStr} -> ${incrementedAnswer}`);
           updatedCount++;
         } else {
           console.warn(`   ⚠️ 无效的更新方式，newAnswer=${newAnswer}, action=${action}`);
@@ -304,7 +323,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       updates.forEach(update => {
         const q = examFile.questions[update.questionId];
         if (q) {
-          console.log(`   题目 ${update.questionId}: answer = ${q.answer}`);
+          const answerStr = Array.isArray(q.answer) ? `[${q.answer}]` : q.answer;
+          console.log(`   题目 ${update.questionId}: answer = ${answerStr}`);
         }
       });
     } else {

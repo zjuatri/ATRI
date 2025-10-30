@@ -217,7 +217,7 @@ if (isSupportedDomain()) {
         });
       } else if (isPageType('pointOfMastery', currentUrl) && window.isAutoAnswering) {
         setTimeout(() => {
-          handlePointOfMastery();
+          handlePointOfMasteryPage();
         }, 2000);
       } else if (isPageType('examAnalysis', currentUrl) && window.isAutoAnswering) {
         console.log('🔄 检测到跳转到 examAnalysis 页面（popstate）');
