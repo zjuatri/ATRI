@@ -280,13 +280,24 @@ if (isSupportedDomain()) {
       console.log('📋 [init] 考试参数:', window.currentExamParams);
     });
     
-    // 如果正在自动答题且页面初始加载就是 exam 页面，启动数据检查
-    if (window.isAutoAnswering) {
-      console.log('🚀 页面加载时已在 exam 页面，启动数据检查');
-      setupExamDataCheck();
-    }
+  } else if (isPageType('examAnalysis')) {
+    console.log('📊 检测到答题分析页面，提取参数');
     
-    // 监听URL变化（用于单页应用导航）
+    // examAnalysis 页面也需要提取参数
+    extractExamParams().then(params => {
+      window.currentExamParams = params;
+      console.log('📋 [init] examAnalysis 参数:', window.currentExamParams);
+    });
+  }
+  
+  // 如果是考试页面且正在自动答题，启动数据检查
+  if (isPageType('exam') && window.isAutoAnswering) {
+    console.log('🚀 页面加载时已在 exam 页面，启动数据检查');
+    setupExamDataCheck();
+  }
+  
+  // 监听URL变化（用于单页应用导航）
+  if (isPageType('exam')) {
     let lastUrl = window.location.href;
     const urlObserver = new MutationObserver(() => {
       const currentUrl = window.location.href;

@@ -127,6 +127,11 @@ async function autoAnswerInExamPage() {
         console.error('   2. 请求已发送但拦截器未捕获');
         console.error('   3. 响应数据格式不符合预期');
         console.error('请检查 Network 面板中是否有 exam/start 请求');
+        
+        if (window.isAutoAnswering) {
+          console.log('🔄 自动刷新页面以重新触发请求...');
+          location.reload();
+        }
       }
     };
     
