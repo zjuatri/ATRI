@@ -19,6 +19,78 @@ window.answerCounter = 1;
 window.autoAnswerInterval = null;
 window.currentExamQuestions = [];
 
+// 定时器管理：保存所有活动的定时器ID
+window.activeTimers = {
+  timeouts: new Set(),
+  intervals: new Set()
+};
+
+// 包装 setTimeout，自动追踪定时器
+window.managedSetTimeout = function(callback, delay) {
+  const timerId = setTimeout(() => {
+    window.activeTimers.timeouts.delete(timerId);
+    // 在执行前检查是否已停止
+    if (window.isAutoAnswering) {
+      callback();
+    } else {
+      console.log('⏸️ 定时器被跳过（已停止答题）');
+    }
+  }, delay);
+  window.activeTimers.timeouts.add(timerId);
+  return timerId;
+};
+
+// 包装 setInterval，自动追踪定时器
+window.managedSetInterval = function(callback, delay) {
+  const timerId = setInterval(() => {
+    // 在执行前检查是否已停止
+    if (window.isAutoAnswering) {
+      callback();
+    } else {
+      console.log('⏸️ 定时器被跳过（已停止答题）');
+      clearInterval(timerId);
+      window.activeTimers.intervals.delete(timerId);
+    }
+  }, delay);
+  window.activeTimers.intervals.add(timerId);
+  return timerId;
+};
+
+// 清除所有定时器
+window.clearAllTimers = function() {
+  console.log('🧹 清除所有定时器...');
+  console.log(`  📊 setTimeout: ${window.activeTimers.timeouts.size} 个`);
+  console.log(`  📊 setInterval: ${window.activeTimers.intervals.size} 个`);
+  
+  // 清除所有 setTimeout
+  window.activeTimers.timeouts.forEach(timerId => {
+    clearTimeout(timerId);
+  });
+  window.activeTimers.timeouts.clear();
+  
+  // 清除所有 setInterval
+  window.activeTimers.intervals.forEach(timerId => {
+    clearInterval(timerId);
+  });
+  window.activeTimers.intervals.clear();
+  
+  console.log('✅ 所有定时器已清除');
+};
+
+// 调试工具：查看题库存储状态
+window.debugStorage = async function() {
+  try {
+    const response = await chrome.runtime.sendMessage({ action: 'debugStorage' });
+    console.log('✅ 调试信息已输出到控制台');
+    return response;
+  } catch (error) {
+    console.error('❌ 调试失败:', error);
+  }
+};
+
+console.log('💡 提示：在控制台输入 debugStorage() 可查看题库存储状态');
+
+
 // 页面加载时，恢复自动答题状态（仅在特定页面）
 (async function restoreAutoAnsweringState() {
   try {
@@ -122,6 +194,9 @@ window.addEventListener('message', function(event) {
               console.warn('⚠️ [content] 返回数据中没有 examFile');
             }
             
+            // 触发数据就绪事件
+            window.dispatchEvent(new Event('examDataReady'));
+            
             // 如果正在自动答题，开始答题
             if (window.isAutoAnswering) {
               console.log('🤖 [content] 自动答题模式：题库已更新，准备开始答题...');
@@ -164,6 +239,33 @@ window.addEventListener('message', function(event) {
   }
 });
 
+// 设置 exam 页面数据检查（如果3秒内未收到数据则刷新）
+function setupExamDataCheck() {
+  console.log('⏰ 启动 exam 数据检查，3秒倒计时...');
+  
+  // 清空旧的题目数据，强制等待新的拦截
+  window.currentExamQuestions = [];
+  window.answerCounter = 1;
+  
+  // 设置一个超时检查：如果3秒内没有收到数据，刷新页面
+  let dataReceived = false;
+  const checkDataTimeout = setTimeout(() => {
+    if (!dataReceived && window.isAutoAnswering) {
+      console.log('⚠️ 3秒内未收到考试数据，刷新页面以触发 exam/start 请求...');
+      location.reload();
+    }
+  }, 3000);
+  
+  // 监听数据到达事件
+  const onDataReceived = () => {
+    dataReceived = true;
+    clearTimeout(checkDataTimeout);
+    console.log('✅ 已收到考试数据，取消刷新');
+    window.removeEventListener('examDataReady', onDataReceived);
+  };
+  window.addEventListener('examDataReady', onDataReceived, { once: true });
+}
+
 // 检查当前页面域名并初始化
 if (isSupportedDomain()) {
   console.log('✅ 智慧树页面检测成功:', window.location.href);
@@ -177,6 +279,12 @@ if (isSupportedDomain()) {
       window.currentExamParams = params;
       console.log('📋 [init] 考试参数:', window.currentExamParams);
     });
+    
+    // 如果正在自动答题且页面初始加载就是 exam 页面，启动数据检查
+    if (window.isAutoAnswering) {
+      console.log('🚀 页面加载时已在 exam 页面，启动数据检查');
+      setupExamDataCheck();
+    }
     
     // 监听URL变化（用于单页应用导航）
     let lastUrl = window.location.href;
@@ -192,23 +300,10 @@ if (isSupportedDomain()) {
             window.currentExamParams = params;
           });
           
-          // 如果正在自动答题，开始答题
+          // 如果正在自动答题，启动数据检查
           if (window.isAutoAnswering) {
             console.log('🚀 检测到进入 exam 页面，准备答题');
-            console.log('📊 当前题目数据状态:', window.currentExamQuestions?.length || 0, '题');
-            
-            setTimeout(() => {
-              window.answerCounter = 1;
-              
-              // 如果已有题目数据，直接开始答题
-              if (window.currentExamQuestions && window.currentExamQuestions.length > 0) {
-                console.log('✅ 题目数据已存在，立即开始答题');
-                autoAnswerInExamPage();
-              } else {
-                console.log('⏳ 等待题目数据拦截...');
-                // 题目数据会在拦截到请求后自动触发答题
-              }
-            }, 2000);
+            setupExamDataCheck();
           }
         } else if (isPageType('pointOfMastery', currentUrl)) {
           // 跳转到 pointOfMastery 页面，处理进度检查

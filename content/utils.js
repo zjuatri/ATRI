@@ -63,7 +63,7 @@ async function extractExamParams() {
     const params = new URLSearchParams(url.search);
     const isFusionDomain = url.href.includes('fusioncourseh5.zhihuishu.com');
     
-    let knowledgeId, recruitAndCourseId, secretStr, timestamp;
+    let knowledgeId, recruitAndCourseId, secretStr, timestamp, idStr;
     
     if (isFusionDomain) {
       // fusioncourseh5 域名：参数在 URL 路径中
@@ -73,14 +73,19 @@ async function extractExamParams() {
       if (pathParts[0] === 'exam' && pathParts.length >= 4) {
         knowledgeId = pathParts[3]; // RjBNRp2Lv1SJZ7yN
         recruitAndCourseId = params.get('recruitAndCourseId');
+        idStr = params.get('idStr');
         
-        // 如果从 URL 获取不到 recruitAndCourseId，尝试从 storage 读取
-        if (!recruitAndCourseId) {
+        // 如果从 URL 获取不到参数，尝试从 storage 读取
+        if (!recruitAndCourseId || !idStr) {
           try {
-            const result = await chrome.storage.local.get(['savedRecruitAndCourseId']);
-            if (result.savedRecruitAndCourseId) {
+            const result = await chrome.storage.local.get(['savedRecruitAndCourseId', 'savedIdStr']);
+            if (!recruitAndCourseId && result.savedRecruitAndCourseId) {
               recruitAndCourseId = result.savedRecruitAndCourseId;
               console.log('📋 [fusion] 从 storage 读取 recruitAndCourseId:', recruitAndCourseId);
+            }
+            if (!idStr && result.savedIdStr) {
+              idStr = result.savedIdStr;
+              console.log('📋 [fusion] 从 storage 读取 idStr:', idStr);
             }
           } catch (e) {
             console.warn('⚠️ 读取 storage 失败:', e);
@@ -93,6 +98,7 @@ async function extractExamParams() {
         console.log('📋 [fusion] 从路径提取参数:', {
           knowledgeId,
           recruitAndCourseId,
+          idStr,
           pathParts
         });
       }
@@ -100,17 +106,39 @@ async function extractExamParams() {
       // studywisdomh5 域名：参数在查询字符串中
       knowledgeId = params.get('knowledgeId');
       recruitAndCourseId = params.get('recruitAndCourseId');
+      idStr = params.get('idStr');
       secretStr = params.get('secretStr');
       timestamp = params.get('timestamp');
+      
+      // 如果从 URL 获取不到参数，尝试从 storage 读取
+      if (!recruitAndCourseId || !idStr) {
+        try {
+          const result = await chrome.storage.local.get(['savedRecruitAndCourseId', 'savedIdStr']);
+          if (!recruitAndCourseId && result.savedRecruitAndCourseId) {
+            recruitAndCourseId = result.savedRecruitAndCourseId;
+            console.log('📋 [studywisdom] 从 storage 读取 recruitAndCourseId:', recruitAndCourseId);
+          }
+          if (!idStr && result.savedIdStr) {
+            idStr = result.savedIdStr;
+            console.log('📋 [studywisdom] 从 storage 读取 idStr:', idStr);
+          }
+        } catch (e) {
+          console.warn('⚠️ 读取 storage 失败:', e);
+        }
+      }
     }
     
     if (knowledgeId && recruitAndCourseId) {
-      // 保存 recruitAndCourseId 到 storage 供后续使用
+      // 保存参数到 storage 供后续使用
       try {
-        await chrome.storage.local.set({ savedRecruitAndCourseId: recruitAndCourseId });
-        console.log('💾 [提取参数] 保存 recruitAndCourseId 到 storage:', recruitAndCourseId);
+        const storageData = { savedRecruitAndCourseId: recruitAndCourseId };
+        if (idStr) {
+          storageData.savedIdStr = idStr;
+        }
+        await chrome.storage.local.set(storageData);
+        console.log('💾 [提取参数] 保存参数到 storage:', { recruitAndCourseId, idStr });
       } catch (e) {
-        console.warn('⚠️ 保存 recruitAndCourseId 失败:', e);
+        console.warn('⚠️ 保存参数失败:', e);
       }
       
       // 生成文件名
@@ -119,13 +147,14 @@ async function extractExamParams() {
       return {
         knowledgeId,
         recruitAndCourseId,
+        idStr,
         secretStr,
         timestamp,
         fileName
       };
     }
     
-    console.warn('⚠️ 未能提取到必要的参数:', { knowledgeId, recruitAndCourseId });
+    console.warn('⚠️ 未能提取到必要的参数:', { knowledgeId, recruitAndCourseId, idStr });
     return null;
   } catch (e) {
     console.error('❌ 提取URL参数失败:', e);

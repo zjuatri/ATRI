@@ -280,6 +280,23 @@ function updateDisplayBoxContent() {
         📋 显示答案 JSON
       </button>
       
+      <button id="clearCurrentExamBtn" style="
+        width: 100%;
+        padding: 9px;
+        background: rgba(255, 255, 255, 0.85);
+        color: #f59e0b;
+        border: 1.5px solid #fcd34d;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 6px rgba(245, 158, 11, 0.12);
+        letter-spacing: 0.3px;
+      " onmouseover="this.style.background='rgba(254, 252, 232, 1)'; this.style.borderColor='#fbbf24'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 3px 10px rgba(245, 158, 11, 0.2)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.85)'; this.style.borderColor='#fcd34d'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 6px rgba(245, 158, 11, 0.12)'">
+        🗂️ 清空当前题库
+      </button>
+      
       <button id="clearAllAnswersBtn" style="
         width: 100%;
         padding: 9px;
@@ -334,6 +351,15 @@ function updateDisplayBoxContent() {
     });
   }
   
+  // 绑定清空当前题库按钮事件（所有页面）
+  const clearCurrentBtn = displayBox.querySelector('#clearCurrentExamBtn');
+  if (clearCurrentBtn) {
+    clearCurrentBtn.addEventListener('click', () => {
+      console.log('🗂️ 用户点击清空当前题库按钮');
+      clearCurrentExam();
+    });
+  }
+  
   // 绑定清空所有题库按钮事件（所有页面）
   const clearAllBtn = displayBox.querySelector('#clearAllAnswersBtn');
   if (clearAllBtn) {
@@ -342,6 +368,51 @@ function updateDisplayBoxContent() {
       clearAllAnswers();
     });
   }
+}
+
+// 清空当前题库
+function clearCurrentExam() {
+  // 检查是否有当前考试文件名
+  const fileName = window.currentExamParams?.fileName;
+  
+  if (!fileName) {
+    showNotification('⚠️ 当前没有考试题库', 'error');
+    console.warn('⚠️ 没有找到当前考试的文件名');
+    return;
+  }
+  
+  // 确认对话框
+  const confirmed = confirm(`⚠️ 确定要清空当前题库吗？\n\n文件名: ${fileName}\n\n此操作无法撤销！`);
+  
+  if (!confirmed) {
+    console.log('❌ 用户取消了清空操作');
+    return;
+  }
+  
+  console.log('🗑️ 开始清空当前题库:', fileName);
+  
+  // 发送清空请求到 background
+  safeSendMessage({
+    action: 'clearExamFile',
+    fileName: fileName
+  }).then(response => {
+    if (response && response.success) {
+      console.log('✅ 当前题库已清空:', fileName);
+      showNotification(`✅ 已清空题库: ${fileName}`, 'success');
+      
+      // 清空本地缓存
+      window.currentExamFile = response.examFile;
+      
+      // 更新显示
+      updateDisplayBoxContent();
+    } else {
+      console.error('❌ 清空题库失败:', response);
+      showNotification('❌ 清空题库失败', 'error');
+    }
+  }).catch(err => {
+    console.error('❌ 清空题库请求失败:', err);
+    showNotification('❌ 清空题库失败', 'error');
+  });
 }
 
 // 清空所有题库

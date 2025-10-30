@@ -4,6 +4,25 @@ console.log('Background service worker started');
 // 存储考试数据
 let examDataStore = {};
 
+// 立即从 storage 加载已保存的题库数据
+(async function loadExamDataOnStartup() {
+  try {
+    const result = await chrome.storage.local.get(['examDataStore']);
+    if (result.examDataStore) {
+      examDataStore = result.examDataStore;
+      console.log('✅ 已从 storage 加载题库数据，共', Object.keys(examDataStore).length, '个文件');
+      // 输出每个文件的题目数量
+      Object.entries(examDataStore).forEach(([fileName, data]) => {
+        console.log(`  📁 ${fileName}: ${data.totalQuestions || 0} 题`);
+      });
+    } else {
+      console.log('ℹ️ Storage 中暂无题库数据');
+    }
+  } catch (error) {
+    console.error('❌ 加载题库数据失败:', error);
+  }
+})();
+
 // 监听插件安装事件
 chrome.runtime.onInstalled.addListener((details) => {
   console.log('Extension installed:', details);
@@ -15,20 +34,24 @@ chrome.runtime.onInstalled.addListener((details) => {
       version: '1.0.0'
     }
   });
-  
-  // 加载已保存的考试数据
-  chrome.storage.local.get(['examDataStore'], (result) => {
-    if (result.examDataStore) {
-      examDataStore = result.examDataStore;
-      console.log('加载已保存的考试数据:', examDataStore);
-    }
-  });
 });
 
 // 保存考试数据到 storage
 function saveExamData() {
+  const fileCount = Object.keys(examDataStore).length;
+  const totalQuestions = Object.values(examDataStore).reduce((sum, file) => sum + (file.totalQuestions || 0), 0);
+  
   chrome.storage.local.set({ examDataStore }, () => {
-    console.log('考试数据已保存');
+    if (chrome.runtime.lastError) {
+      console.error('❌ 保存题库数据失败:', chrome.runtime.lastError);
+    } else {
+      console.log(`💾 题库数据已保存到 storage: ${fileCount} 个文件，共 ${totalQuestions} 题`);
+      
+      // 输出每个文件的详情
+      Object.entries(examDataStore).forEach(([fileName, data]) => {
+        console.log(`  📁 ${fileName}: ${data.totalQuestions || 0} 题`);
+      });
+    }
   });
 }
 
@@ -253,6 +276,45 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     saveExamData();
     console.log(`✅ 已清空所有题库，共 ${count} 个文件`);
     sendResponse({ success: true, clearedCount: count });
+  }
+  
+  if (request.action === 'debugStorage') {
+    // 调试：查看当前 storage 中的数据
+    chrome.storage.local.get(['examDataStore'], (result) => {
+      console.log('🔍 [调试] Storage 中的数据:');
+      if (result.examDataStore) {
+        const fileCount = Object.keys(result.examDataStore).length;
+        console.log(`  📦 文件总数: ${fileCount}`);
+        Object.entries(result.examDataStore).forEach(([fileName, data]) => {
+          console.log(`  📁 ${fileName}:`);
+          console.log(`     - 题目数: ${data.totalQuestions || 0}`);
+          console.log(`     - 创建时间: ${data.createdAt}`);
+          console.log(`     - 更新时间: ${data.updatedAt}`);
+          // 显示前3道题的答案
+          const questionIds = Object.keys(data.questions || {}).slice(0, 3);
+          questionIds.forEach(qId => {
+            const q = data.questions[qId];
+            const answerStr = Array.isArray(q.answer) ? `[${q.answer}]` : q.answer;
+            console.log(`     - 题目 ${qId}: ${answerStr}`);
+          });
+          if (Object.keys(data.questions || {}).length > 3) {
+            console.log(`     ... 还有 ${Object.keys(data.questions).length - 3} 道题`);
+          }
+        });
+      } else {
+        console.log('  ❌ Storage 为空');
+      }
+      
+      console.log('🔍 [调试] 内存中的数据:');
+      const memFileCount = Object.keys(examDataStore).length;
+      console.log(`  📦 文件总数: ${memFileCount}`);
+      Object.entries(examDataStore).forEach(([fileName, data]) => {
+        console.log(`  📁 ${fileName}: ${data.totalQuestions || 0} 题`);
+      });
+      
+      sendResponse({ success: true, storageData: result.examDataStore, memoryData: examDataStore });
+    });
+    return true; // 保持消息通道开启
   }
   
   if (request.action === 'updateAnswers') {

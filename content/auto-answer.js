@@ -185,6 +185,10 @@ async function detectAndFillAnswer() {
   if (visibleInputs.length === 0) {
     console.warn('⚠️ 没有检测到可见的 radio/checkbox input，2秒后重试');
     setTimeout(() => {
+      if (!window.isAutoAnswering) {
+        console.log('⏸️ 已停止答题，取消重试');
+        return;
+      }
       detectAndFillAnswer();
     }, 2000);
     return;
@@ -262,6 +266,10 @@ function fillAnswerOnly(answerArray) {
         
         // 继续下一题
         setTimeout(() => {
+          if (!window.isAutoAnswering) {
+            console.log('⏸️ 已停止答题，不再继续下一题');
+            return;
+          }
           window.answerCounter++;
           console.log(`📊 计数器更新为: ${window.answerCounter}`);
           clickNextQuestion();
@@ -281,6 +289,11 @@ function fillAnswerOnly(answerArray) {
         
         // 等待一小段时间后检查状态
         setTimeout(() => {
+          if (!window.isAutoAnswering) {
+            console.log('⏸️ 已停止答题');
+            return;
+          }
+          
           const afterChecked = targetInput.element.checked;
           console.log(`     点击后状态: checked=${afterChecked}`);
           
@@ -383,6 +396,10 @@ function clickNextQuestion() {
     
     // 点击后等待检测 input
     setTimeout(() => {
+      if (!window.isAutoAnswering) {
+        console.log('⏸️ 已停止答题');
+        return;
+      }
       detectAndFillAnswer();
     }, 500);
   } else {
@@ -400,11 +417,6 @@ function clickSubmitButton() {
     console.log('✅ [submit] 找到提交按钮，点击');
     submitButton.click();
     
-    // 触发多种事件
-    submitButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-    submitButton.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
-    submitButton.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
-    
     console.log('✅ [submit] 已点击提交按钮');
     console.log('⏳ [submit] 等待跳转到 pointOfMastery 或 examAnalysis 页面...');
     
@@ -413,6 +425,13 @@ function clickSubmitButton() {
     const maxChecks = 20; // 最多检查 20 次（10 秒）
     
     const checkPageChange = setInterval(() => {
+      if (!window.isAutoAnswering) {
+        console.log('⏸️ [submit] 已停止答题，取消页面检查');
+        clearInterval(checkPageChange);
+        window._isAnswering = false;
+        return;
+      }
+      
       checkCount++;
       const currentUrl = window.location.href;
       console.log(`🔍 [submit] 检查页面变化 (${checkCount}/${maxChecks}):`, currentUrl);
@@ -425,6 +444,10 @@ function clickSubmitButton() {
         
         // 等待页面加载完成后处理
         setTimeout(() => {
+          if (!window.isAutoAnswering) {
+            console.log('⏸️ [submit] 已停止答题，不处理 pointOfMastery');
+            return;
+          }
           if (window.handlePointOfMasteryPage) {
             console.log('🚀 [submit] 调用 handlePointOfMasteryPage');
             window.handlePointOfMasteryPage();
@@ -438,6 +461,11 @@ function clickSubmitButton() {
         clearInterval(checkPageChange);
         // 清除答题执行标志
         window._isAnswering = false;
+        
+        if (!window.isAutoAnswering) {
+          console.log('⏸️ [submit] 已停止答题，不处理 examAnalysis');
+          return;
+        }
         // examAnalysis 页面会通过拦截器自动处理
         
       } else if (checkCount >= maxChecks) {
@@ -486,6 +514,11 @@ async function stopAutoAnswering() {
   window.answerCounter = 1;
   window.currentExamQuestions = []; // 清空题目列表
   
+  // 清除所有定时器
+  if (window.clearAllTimers) {
+    window.clearAllTimers();
+  }
+  
   // 清除状态
   try {
     await chrome.storage.local.set({ isAutoAnswering: false });
@@ -502,4 +535,6 @@ async function stopAutoAnswering() {
   if (window.updateDisplayBoxContent) {
     window.updateDisplayBoxContent();
   }
+  
+  console.log('✅ [stop] 已停止所有答题流程');
 }
