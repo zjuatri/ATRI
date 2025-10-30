@@ -21,8 +21,18 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://studywisdomh5.zhihuishu.com/*"],
-      "js": ["content/interceptor.js", "content/content.js"],
+      "matches": [
+        "https://studywisdomh5.zhihuishu.com/*",
+        "https://fusioncourseh5.zhihuishu.com/*"
+      ],
+      "js": [
+        "content/interceptor.js",
+        "content/utils.js",
+        "content/ui.js",
+        "content/auto-answer.js",
+        "content/page-handlers.js",
+        "content/content-main.js"
+      ],
       "run_at": "document_start"
     }
   ],
@@ -34,12 +44,16 @@
   ],
   "host_permissions": [
     "https://studywisdomh5.zhihuishu.com/*",
+    "https://fusioncourseh5.zhihuishu.com/*",
     "https://aistudy.zhihuishu.com/*"
   ],
   "web_accessible_resources": [
     {
       "resources": ["content/page-interceptor.js"],
-      "matches": ["https://studywisdomh5.zhihuishu.com/*"]
+      "matches": [
+        "https://studywisdomh5.zhihuishu.com/*",
+        "https://fusioncourseh5.zhihuishu.com/*"
+      ]
     }
   ]
 }

@@ -1,6 +1,38 @@
 // Content Script - 注入到网页中运行
 console.log('ZhiHuiShu content script loaded');
 
+// 支持的域名列表
+const SUPPORTED_DOMAINS = [
+  'studywisdomh5.zhihuishu.com',
+  'fusioncourseh5.zhihuishu.com'
+];
+
+// 检查当前 URL 是否在支持的域名下
+function isSupportedDomain(url = window.location.href) {
+  return SUPPORTED_DOMAINS.some(domain => url.includes(domain));
+}
+
+// 检查是否为特定页面类型
+function isPageType(type, url = window.location.href) {
+  // type 可以是: 'exam', 'mastery', 'pointOfMastery', 'examAnalysis', 'study'
+  if (!isSupportedDomain(url)) return false;
+  
+  switch(type) {
+    case 'exam':
+      return url.includes('/exam') && !url.includes('/pointOfMastery') && !url.includes('/examAnalysis');
+    case 'mastery':
+      return url.includes('/study/mastery') || url.includes('/mastery');
+    case 'pointOfMastery':
+      return url.includes('/pointOfMastery');
+    case 'examAnalysis':
+      return url.includes('/examAnalysis');
+    case 'study':
+      return url.includes('/study');
+    default:
+      return false;
+  }
+}
+
 // 全局变量：当前考试的参数
 let currentExamParams = null;
 
@@ -85,11 +117,11 @@ window.addEventListener('message', function(event) {
 });
 
 // 检查当前页面域名
-if (window.location.href.includes('studywisdomh5.zhihuishu.com')) {
+if (isSupportedDomain()) {
   console.log('智慧树页面检测成功:', window.location.href);
   
   // 如果是考试页面，检测所有 input 组件并提取URL参数
-  if (window.location.href.includes('https://studywisdomh5.zhihuishu.com/exam')) {
+  if (isPageType('exam')) {
     console.log('检测到考试页面，开始扫描 input 组件');
     
     // 提取URL参数
@@ -102,7 +134,7 @@ if (window.location.href.includes('studywisdomh5.zhihuishu.com')) {
       if (currentUrl !== lastUrl) {
         console.log('🔄 URL 已变化:', currentUrl);
         lastUrl = currentUrl;
-        if (currentUrl.includes('https://studywisdomh5.zhihuishu.com/exam')) {
+        if (isPageType('exam', currentUrl)) {
           // 重新提取参数
           extractExamParams();
           
@@ -124,7 +156,7 @@ if (window.location.href.includes('studywisdomh5.zhihuishu.com')) {
               }
             }, 2000);
           }
-        } else if (currentUrl.includes('https://studywisdomh5.zhihuishu.com/pointOfMastery')) {
+        } else if (isPageType('pointOfMastery', currentUrl)) {
           // 跳转到 pointOfMastery 页面，处理进度检查
           if (isAutoAnswering) {
             console.log('🔄 检测到跳转到 pointOfMastery 页面');
@@ -132,7 +164,7 @@ if (window.location.href.includes('studywisdomh5.zhihuishu.com')) {
               handlePointOfMasteryPage();
             }, 2000);
           }
-        } else if (currentUrl.includes('https://studywisdomh5.zhihuishu.com/examAnalysis')) {
+        } else if (isPageType('examAnalysis', currentUrl)) {
           // 跳转到 examAnalysis 页面，等待答题分析数据
           if (isAutoAnswering) {
             console.log('🔄 检测到跳转到 examAnalysis 页面，等待数据加载...');
@@ -148,13 +180,13 @@ if (window.location.href.includes('studywisdomh5.zhihuishu.com')) {
     window.addEventListener('popstate', () => {
       console.log('🔄 popstate 事件触发');
       const currentUrl = window.location.href;
-      if (currentUrl.includes('https://studywisdomh5.zhihuishu.com/exam')) {
+      if (isPageType('exam', currentUrl)) {
         extractExamParams();
-      } else if (currentUrl.includes('https://studywisdomh5.zhihuishu.com/pointOfMastery') && isAutoAnswering) {
+      } else if (isPageType('pointOfMastery', currentUrl) && isAutoAnswering) {
         setTimeout(() => {
           handlePointOfMasteryPage();
         }, 2000);
-      } else if (currentUrl.includes('https://studywisdomh5.zhihuishu.com/examAnalysis') && isAutoAnswering) {
+      } else if (isPageType('examAnalysis', currentUrl) && isAutoAnswering) {
         console.log('🔄 检测到跳转到 examAnalysis 页面（popstate）');
       }
     });
@@ -162,13 +194,13 @@ if (window.location.href.includes('studywisdomh5.zhihuishu.com')) {
     window.addEventListener('hashchange', () => {
       console.log('🔄 hashchange 事件触发');
       const currentUrl = window.location.href;
-      if (currentUrl.includes('https://studywisdomh5.zhihuishu.com/exam')) {
+      if (isPageType('exam', currentUrl)) {
         extractExamParams();
-      } else if (currentUrl.includes('https://studywisdomh5.zhihuishu.com/pointOfMastery') && isAutoAnswering) {
+      } else if (isPageType('pointOfMastery', currentUrl) && isAutoAnswering) {
         setTimeout(() => {
           handlePointOfMasteryPage();
         }, 2000);
-      } else if (currentUrl.includes('https://studywisdomh5.zhihuishu.com/examAnalysis') && isAutoAnswering) {
+      } else if (isPageType('examAnalysis', currentUrl) && isAutoAnswering) {
         console.log('🔄 检测到跳转到 examAnalysis 页面（hashchange）');
       }
     });
@@ -298,7 +330,7 @@ let currentExamQuestions = []; // 当前考试的题目列表（按顺序）
       console.log('📍 [恢复状态] 当前 URL:', window.location.href);
       
       // 如果是考试页面，等待题目数据加载
-      if (window.location.href.includes('/exam') && !window.location.href.includes('/pointOfMastery') && !window.location.href.includes('/examAnalysis')) {
+      if (isPageType('exam')) {
         console.log('📝 [恢复状态] 当前在考试页面，等待题目数据...');
         // autoAnswerInExamPage 会在收到题目数据后自动调用
       }
@@ -366,7 +398,7 @@ function detectInputElements() {
 // 查找页面中符合条件的按钮（最后一个）
 function findTargetButton() {
   // 只在 mastery 页面才查找按钮
-  if (!window.location.href.includes('https://studywisdomh5.zhihuishu.com/study/mastery')) {
+  if (!isPageType('mastery')) {
     return null;
   }
   
@@ -403,7 +435,7 @@ function findTargetButton() {
 // 定期查找按钮（因为页面可能动态加载）
 function startButtonMonitor() {
   // 只在 mastery 页面才启动按钮监控
-  const isMasteryPage = window.location.href.includes('https://studywisdomh5.zhihuishu.com/study/mastery');
+  const isMasteryPage = isPageType('mastery');
   
   if (!isMasteryPage) {
     console.log('非 mastery 页面，不启动按钮监控');
@@ -418,7 +450,7 @@ function startButtonMonitor() {
   // 定期检查
   setInterval(() => {
     // 再次确认是否还在 mastery 页面
-    if (window.location.href.includes('https://studywisdomh5.zhihuishu.com/study/mastery')) {
+    if (isPageType('mastery')) {
       if (!targetButton || !document.body.contains(targetButton)) {
         findTargetButton();
         updateDisplayBox(); // 更新显示状态
@@ -504,15 +536,15 @@ function initDisplayBox() {
 function updateDisplayBoxContent() {
   if (!displayBox) return;
   
-  const isStudyPage = window.location.href.includes('https://studywisdomh5.zhihuishu.com/study');
-  const isMasteryPage = window.location.href.includes('https://studywisdomh5.zhihuishu.com/study/mastery');
+  const isStudyPage = isPageType('study');
+  const isMasteryPage = isPageType('mastery');
   const hasButton = targetButton && document.body.contains(targetButton);
   const buttonStatus = hasButton ? 
     '<span style="color: #4ade80;">● 已找到</span>' : 
     '<span style="color: #fbbf24;">● 未找到</span>';
   
   const hasSecretStr = currentSecretStr !== null;
-  const isExamPage = window.location.href.includes('https://studywisdomh5.zhihuishu.com/exam');
+  const isExamPage = isPageType('exam');
   const hasExamFile = currentExamFile !== null;
   
   displayBox.innerHTML = `
@@ -944,7 +976,7 @@ async function stopAutoAnswering() {
 // 查找并点击下一个未完成的题目
 function findAndClickNextUncompleted() {
   // 确保在 mastery 页面
-  if (!window.location.href.includes('https://studywisdomh5.zhihuishu.com/study/mastery')) {
+  if (!isPageType('mastery')) {
     console.log('⚠️ 不在 mastery 页面，无法查找未完成的题目');
     stopAutoAnswering();
     return false;
@@ -989,7 +1021,7 @@ function handlePointOfMasteryPage() {
   console.log('🔍 当前页面 URL:', currentUrl);
   
   // 检查是否在 pointOfMastery 页面
-  if (!currentUrl.includes('https://studywisdomh5.zhihuishu.com/pointOfMastery')) {
+  if (!isPageType('pointOfMastery', currentUrl)) {
     console.warn('⚠️ 不在 pointOfMastery 页面，等待跳转...');
     setTimeout(() => {
       if (isAutoAnswering) {

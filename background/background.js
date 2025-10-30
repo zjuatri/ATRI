@@ -173,6 +173,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     sendResponse({ success: true, examFile });
   }
   
+  if (request.action === 'getAnswerJSON') {
+    // 获取答案 JSON 用于显示
+    const fileName = request.fileName;
+    const examFile = examDataStore[fileName];
+    if (examFile) {
+      sendResponse({ success: true, data: examFile });
+    } else {
+      sendResponse({ success: false, error: '题库文件不存在' });
+    }
+  }
+  
   if (request.action === 'downloadExamFile') {
     // 下载JSON文件
     const fileName = request.fileName;
@@ -232,27 +243,53 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const fileName = request.fileName;
     const updates = request.updates || [];
     
-    console.log('📝 收到答案更新请求:', fileName, '需要更新', updates.length, '题');
+    console.log('📝 [updateAnswers] 收到答案更新请求');
+    console.log('   文件名:', fileName);
+    console.log('   需要更新:', updates.length, '题');
+    console.log('   更新列表:', updates);
+    
+    if (!fileName) {
+      console.error('❌ 文件名为空，无法更新');
+      sendResponse({ success: false, error: '文件名为空' });
+      return true;
+    }
     
     const examFile = getOrCreateExamFile(fileName);
+    console.log('📂 当前题库状态:');
+    console.log('   题目总数:', examFile.totalQuestions);
+    console.log('   题库题目:', Object.keys(examFile.questions));
+    
     let updatedCount = 0;
     
-    updates.forEach(update => {
+    updates.forEach((update, index) => {
       const questionId = update.questionId;
       const action = update.action;
+      const newAnswer = update.newAnswer;
+      
+      console.log(`🔄 [${index + 1}/${updates.length}] 处理题目 ${questionId}`);
       
       if (examFile.questions[questionId]) {
         const currentAnswer = examFile.questions[questionId].answer;
+        console.log(`   当前答案: ${currentAnswer}`);
         
-        if (action === 'increment') {
-          // 答案 +1
-          const newAnswer = currentAnswer + 1;
+        // 支持两种更新方式：action='increment' 或 直接提供 newAnswer
+        if (newAnswer !== undefined) {
+          // 直接使用提供的新答案
           examFile.questions[questionId].answer = newAnswer;
-          console.log(`✅ 题目 ${questionId} 答案更新: ${currentAnswer} -> ${newAnswer}`);
+          console.log(`   ✅ 答案已更新: ${currentAnswer} -> ${newAnswer}`);
           updatedCount++;
+        } else if (action === 'increment') {
+          // 答案 +1
+          const incrementedAnswer = currentAnswer + 1;
+          examFile.questions[questionId].answer = incrementedAnswer;
+          console.log(`   ✅ 答案已更新: ${currentAnswer} -> ${incrementedAnswer}`);
+          updatedCount++;
+        } else {
+          console.warn(`   ⚠️ 无效的更新方式，newAnswer=${newAnswer}, action=${action}`);
         }
       } else {
-        console.warn(`⚠️ 题目 ${questionId} 不在题库中，无法更新`);
+        console.warn(`   ⚠️ 题目 ${questionId} 不在题库中，无法更新`);
+        console.warn(`   题库中的题目:`, Object.keys(examFile.questions));
       }
     });
     
@@ -260,6 +297,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       examFile.updatedAt = new Date().toISOString();
       saveExamData();
       console.log(`✅ 成功更新 ${updatedCount} 道题目的答案`);
+      console.log('💾 题库已保存到 storage');
+      
+      // 输出更新后的题库状态
+      console.log('📚 更新后的题库:');
+      updates.forEach(update => {
+        const q = examFile.questions[update.questionId];
+        if (q) {
+          console.log(`   题目 ${update.questionId}: answer = ${q.answer}`);
+        }
+      });
+    } else {
+      console.warn('⚠️ 没有题目被更新');
     }
     
     sendResponse({ 

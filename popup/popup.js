@@ -2,10 +2,21 @@
 document.addEventListener('DOMContentLoaded', function() {
   const actionBtn = document.getElementById('actionBtn');
   
+  // 支持的域名列表
+  const SUPPORTED_DOMAINS = [
+    'studywisdomh5.zhihuishu.com',
+    'fusioncourseh5.zhihuishu.com'
+  ];
+  
+  // 检查 URL 是否在支持的域名下
+  function isSupportedDomain(url) {
+    return SUPPORTED_DOMAINS.some(domain => url.includes(domain));
+  }
+  
   // 检查当前页面是否为智慧树页面
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     const currentUrl = tabs[0].url;
-    if (currentUrl && currentUrl.includes('studywisdomh5.zhihuishu.com')) {
+    if (currentUrl && isSupportedDomain(currentUrl)) {
       document.querySelector('.content p').textContent = '✅ 已检测到智慧树页面';
       document.querySelector('.content p').style.color = '#4CAF50';
     } else {
@@ -18,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 向当前标签页发送消息
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
       const currentUrl = tabs[0].url;
-      if (!currentUrl || !currentUrl.includes('studywisdomh5.zhihuishu.com')) {
+      if (!currentUrl || !isSupportedDomain(currentUrl)) {
         alert('请在智慧树页面使用此功能！');
         return;
       }
