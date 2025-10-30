@@ -488,6 +488,21 @@ async function startAutoAnswering() {
   window.answerCounter = 1;
   window.currentExamQuestions = []; // 重置题目列表
   
+  // 从当前页面 URL 提取并保存 recruitAndCourseId
+  try {
+    const url = new URL(window.location.href);
+    const recruitAndCourseId = url.searchParams.get('recruitAndCourseId');
+    if (recruitAndCourseId) {
+      window.masteryRecruitAndCourseId = recruitAndCourseId;
+      await chrome.storage.local.set({ masteryRecruitAndCourseId: recruitAndCourseId });
+      console.log('📋 [start] 记录 mastery 页面的 recruitAndCourseId:', recruitAndCourseId);
+    } else {
+      console.warn('⚠️ [start] 当前页面 URL 中没有 recruitAndCourseId');
+    }
+  } catch (e) {
+    console.error('❌ [start] 提取 recruitAndCourseId 失败:', e);
+  }
+  
   // 保存状态到 storage
   try {
     await chrome.storage.local.set({ isAutoAnswering: true });
