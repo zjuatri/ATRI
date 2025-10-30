@@ -10,6 +10,71 @@ let initialY;
 let xOffset = 0;
 let yOffset = 0;
 
+// 动态更新悬浮框样式（根据答题状态）
+function updateDisplayBoxStyle(box, isAnswering) {
+  if (!box) return;
+  
+  if (isAnswering) {
+    // 答题中：使用竖长背景图 background.png (2798x3387, 比例约 1:1.21)
+    box.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-image: url('${chrome.runtime.getURL('assets/background.png')}');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #1e40af;
+      padding: 20px 18px;
+      border-radius: 16px;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 13px;
+      z-index: 999999;
+      box-shadow: 0 10px 40px rgba(59, 130, 246, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.8);
+      cursor: move;
+      width: 280px;
+      max-height: 90vh;
+      overflow-y: auto;
+      backdrop-filter: blur(10px);
+      user-select: none;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(59, 130, 246, 0.3) transparent;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    `;
+  } else {
+    // 未答题：使用横长背景图 background2.jpg (2560x980, 比例约 2.6:1)
+    box.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-image: url('${chrome.runtime.getURL('assets/background2.jpg')}');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #1e40af;
+      padding: 18px 20px;
+      border-radius: 16px;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 13px;
+      z-index: 999999;
+      box-shadow: 0 10px 40px rgba(59, 130, 246, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.8);
+      cursor: move;
+      width: 420px;
+      max-height: 250px;
+      overflow-y: auto;
+      backdrop-filter: blur(10px);
+      user-select: none;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(59, 130, 246, 0.3) transparent;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    `;
+  }
+}
+
 // 创建浮窗显示框
 function createDisplayBox() {
   if (displayBox) return displayBox;
@@ -21,24 +86,35 @@ function createDisplayBox() {
   }
   
   const box = document.createElement('div');
-  box.style.cssText = `
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%);
-    color: #1e40af;
-    padding: 15px 20px;
-    border-radius: 12px;
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    font-size: 14px;
-    z-index: 999999;
-    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
-    border: 2px solid #3b82f6;
-    cursor: move;
-    min-width: 320px;
-    backdrop-filter: blur(10px);
-    user-select: none;
+  // 初始样式会在 updateDisplayBoxStyle 中设置
+  box.id = 'atri-display-box';
+  
+  // 设置初始样式
+  updateDisplayBoxStyle(box, false); // 初始状态为未答题
+  
+  // 自定义滚动条样式
+  const styleSheet = document.createElement('style');
+  styleSheet.textContent = `
+    #atri-display-box::-webkit-scrollbar {
+      width: 6px;
+    }
+    #atri-display-box::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    #atri-display-box::-webkit-scrollbar-thumb {
+      background: rgba(59, 130, 246, 0.3);
+      border-radius: 3px;
+    }
+    #atri-display-box::-webkit-scrollbar-thumb:hover {
+      background: rgba(59, 130, 246, 0.5);
+    }
   `;
+  if (!document.head.querySelector('#atri-scrollbar-style')) {
+    styleSheet.id = 'atri-scrollbar-style';
+    document.head.appendChild(styleSheet);
+  }
+  
+  box.id = 'atri-display-box';
   
   // 添加拖动事件监听
   box.addEventListener('mousedown', dragStart);
@@ -109,6 +185,9 @@ function initDisplayBox() {
 function updateDisplayBoxContent() {
   if (!displayBox) return;
   
+  // 根据答题状态更新样式
+  updateDisplayBoxStyle(displayBox, window.isAutoAnswering || false);
+  
   const isStudyPage = isPageType('study');
   const isMasteryPage = isPageType('mastery');
   const hasButton = window.targetButton && document.body.contains(window.targetButton);
@@ -121,107 +200,100 @@ function updateDisplayBoxContent() {
   const hasExamFile = window.currentExamFile !== null;
   
   displayBox.innerHTML = `
-    <div style="margin-bottom: 12px; font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: space-between; color: #1e40af;">
-      <span>🎓 ATRI高性能智慧树刷题助手</span>
-      <span style="font-size: 12px; font-weight: normal; opacity: 0.7; color: #3b82f6;">拖动移动</span>
+    <div style="margin-bottom: 14px; text-align: center; background: rgba(255, 255, 255, 0.85); padding: 12px 10px; border-radius: 10px; backdrop-filter: blur(8px);">
+      <div style="font-weight: 700; font-size: 15px; color: #1e40af; margin-bottom: 4px;">🎓 ATRI</div>
+      <div style="font-size: 11px; color: #3b82f6; opacity: 0.85;">高性能智慧树刷题助手</div>
+      <div style="font-size: 10px; color: #60a5fa; opacity: 0.7; margin-top: 3px;">拖动移动</div>
     </div>
     
     ${isStudyPage ? `
-      <div style="margin-bottom: 8px; padding: 8px; background: rgba(59, 130, 246, 0.1); border-radius: 6px; border: 1px solid rgba(59, 130, 246, 0.2);">
-        <div style="font-size: 12px; opacity: 0.9; margin-bottom: 4px; color: #1e40af;">📍 学习页面</div>
-        ${isMasteryPage ? `<div style="font-size: 11px; opacity: 0.8; color: #1e40af;">目标按钮: ${buttonStatus}</div>` : ''}
-      </div>
-    ` : ''}
-    
-    ${!isExamPage && window.detectedInputs && window.detectedInputs.length > 0 ? `
-      <div style="margin-bottom: 8px; padding: 8px; background: rgba(59, 130, 246, 0.1); border-radius: 6px; border: 1px solid rgba(59, 130, 246, 0.2);">
-        <div style="font-size: 12px; opacity: 0.9; color: #1e40af;">🎯 检测到 ${window.detectedInputs.length} 个输入框</div>
-        <div style="font-size: 11px; opacity: 0.7; margin-top: 4px; color: #1e40af;">
-          ${window.detectedInputs.slice(0, 3).map(input => 
-            `<div>• ${input.type}: ${input.name || input.id || '未命名'}</div>`
-          ).join('')}
-          ${window.detectedInputs.length > 3 ? `<div>...还有 ${window.detectedInputs.length - 3} 个</div>` : ''}
-        </div>
+      <div style="margin-bottom: 10px; padding: 10px; background: rgba(255, 255, 255, 0.75); border-radius: 8px; backdrop-filter: blur(5px); border: 1px solid rgba(59, 130, 246, 0.25);">
+        <div style="font-size: 11px; font-weight: 600; margin-bottom: 4px; color: #1e40af;">📍 学习页面</div>
+        ${isMasteryPage ? `<div style="font-size: 10px; opacity: 0.8; color: #1e40af;">目标按钮: ${buttonStatus}</div>` : ''}
       </div>
     ` : ''}
     
     ${window.isAutoAnswering ? `
-      <div style="margin-top: 8px; padding: 8px; background: rgba(34, 197, 94, 0.15); border-radius: 6px; border: 1px solid rgba(34, 197, 94, 0.3);">
-        <div style="font-size: 12px; font-weight: 600; color: #15803d;">🤖 自动答题中...</div>
-        <div style="font-size: 11px; opacity: 0.8; margin-top: 4px; color: #15803d;">
-          当前进度: ${window.answerCounter || 0} / ${window.currentExamQuestions?.length || 0}
+      <div style="margin-bottom: 10px; padding: 10px; background: rgba(236, 253, 245, 0.9); border-radius: 8px; backdrop-filter: blur(5px); border: 1.5px solid rgba(34, 197, 94, 0.4);">
+        <div style="font-size: 11px; font-weight: 600; color: #15803d;">🤖 自动答题中...</div>
+        <div style="font-size: 10px; opacity: 0.85; margin-top: 4px; color: #15803d;">
+          进度: ${window.answerCounter || 0} / ${window.currentExamQuestions?.length || 0}
         </div>
       </div>
       <div style="margin-top: 8px;">
         <button id="stopAnsweringBtn" style="
           width: 100%;
-          padding: 8px;
-          background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-          color: white;
-          border: none;
-          border-radius: 8px;
-          font-size: 13px;
+          padding: 10px;
+          background: rgba(255, 255, 255, 0.9);
+          color: #3b82f6;
+          border: 2px solid #93c5fd;
+          border-radius: 12px;
+          font-size: 12px;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.3s ease;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+          box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+          letter-spacing: 0.5px;
+        " onmouseover="this.style.background='rgba(239, 246, 255, 1)'; this.style.borderColor='#60a5fa'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(59, 130, 246, 0.25)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.9)'; this.style.borderColor='#93c5fd'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(59, 130, 246, 0.15)'">
           ⏸️ 停止答题
         </button>
       </div>
     ` : ''}
     
     ${isMasteryPage && !window.isAutoAnswering ? `
-      <div style="margin-top: 12px;">
+      <div style="margin-top: 10px;">
         <button id="autoAnswerToggleBtn" style="
           width: 100%;
-          padding: 10px;
-          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-          color: white;
-          border: none;
-          border-radius: 8px;
-          font-size: 14px;
-          font-weight: 600;
+          padding: 12px;
+          background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+          color: #1e40af;
+          border: 2px solid #93c5fd;
+          border-radius: 12px;
+          font-size: 13px;
+          font-weight: 700;
           cursor: pointer;
           transition: all 0.3s ease;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+          box-shadow: 0 3px 10px rgba(59, 130, 246, 0.2);
+          letter-spacing: 0.5px;
+        " onmouseover="this.style.background='linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 5px 15px rgba(59, 130, 246, 0.3)'" onmouseout="this.style.background='linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='0 3px 10px rgba(59, 130, 246, 0.2)'">
           🚀 开始刷题
         </button>
       </div>
     ` : ''}
     
-    <div style="margin-top: 12px; padding-top: 8px; border-top: 1px solid rgba(59, 130, 246, 0.3);">
+    <div style="margin-top: 12px; padding: 12px; background: rgba(255, 255, 255, 0.65); border-radius: 10px; backdrop-filter: blur(8px); border: 1px solid rgba(147, 197, 253, 0.3);">
       <button id="showAnswersBtn" style="
         width: 100%;
-        padding: 8px;
-        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-        color: white;
-        border: none;
-        border-radius: 6px;
-        font-size: 12px;
+        padding: 9px;
+        background: rgba(255, 255, 255, 0.85);
+        color: #2563eb;
+        border: 1.5px solid #bfdbfe;
+        border-radius: 10px;
+        font-size: 11px;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-        margin-bottom: 6px;
-      " onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+        box-shadow: 0 2px 6px rgba(59, 130, 246, 0.12);
+        margin-bottom: 8px;
+        letter-spacing: 0.3px;
+      " onmouseover="this.style.background='rgba(239, 246, 255, 1)'; this.style.borderColor='#93c5fd'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 3px 10px rgba(59, 130, 246, 0.2)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.85)'; this.style.borderColor='#bfdbfe'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 6px rgba(59, 130, 246, 0.12)'">
         📋 显示答案 JSON
       </button>
       
       <button id="clearAllAnswersBtn" style="
         width: 100%;
-        padding: 8px;
-        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        color: white;
-        border: none;
-        border-radius: 6px;
-        font-size: 12px;
+        padding: 9px;
+        background: rgba(255, 255, 255, 0.85);
+        color: #2563eb;
+        border: 1.5px solid #bfdbfe;
+        border-radius: 10px;
+        font-size: 11px;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      " onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+        box-shadow: 0 2px 6px rgba(59, 130, 246, 0.12);
+        letter-spacing: 0.3px;
+      " onmouseover="this.style.background='rgba(239, 246, 255, 1)'; this.style.borderColor='#93c5fd'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 3px 10px rgba(59, 130, 246, 0.2)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.85)'; this.style.borderColor='#bfdbfe'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 6px rgba(59, 130, 246, 0.12)'">
         🗑️ 清空所有题库
       </button>
     </div>

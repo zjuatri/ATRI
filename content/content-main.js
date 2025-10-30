@@ -22,6 +22,29 @@ window.currentExamQuestions = [];
 // 页面加载时，恢复自动答题状态（仅在特定页面）
 (async function restoreAutoAnsweringState() {
   try {
+    // 优先检查 sessionStorage（用于页面刷新后的状态恢复）
+    const sessionState = sessionStorage.getItem('atri_auto_answering');
+    if (sessionState === 'true') {
+      console.log('🔄 [恢复状态] 从 sessionStorage 检测到自动答题状态');
+      sessionStorage.removeItem('atri_auto_answering'); // 清除标记
+      
+      // 在 mastery 页面刷新后，恢复状态并继续查找未完成题目
+      if (isPageType('mastery')) {
+        console.log('✅ [恢复状态] mastery 页面刷新后恢复状态');
+        window.isAutoAnswering = true;
+        await chrome.storage.local.set({ isAutoAnswering: true });
+        
+        // 等待页面完全加载后查找未完成题目
+        setTimeout(() => {
+          if (window.isAutoAnswering) {
+            console.log('🔍 [恢复状态] 开始查找未完成题目...');
+            findAndClickNextUncompleted();
+          }
+        }, 1500);
+        return;
+      }
+    }
+    
     const result = await chrome.storage.local.get(['isAutoAnswering']);
     if (result.isAutoAnswering) {
       console.log('🔄 [恢复状态] 检测到自动答题状态');

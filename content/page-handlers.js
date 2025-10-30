@@ -106,7 +106,12 @@ function findAndClickNextUncompleted() {
   
   // 如果找不到 custom-content div，说明页面未加载完成，刷新页面
   if (customContentDivs.length === 0) {
-    console.log('⚠️ 未找到 custom-content div，页面可能未加载完成，刷新页面...');
+    console.log('⚠️ 未找到 custom-content div，页面可能未加载完成，保存状态后刷新页面...');
+    // 保存自动答题状态到 sessionStorage
+    if (window.isAutoAnswering) {
+      sessionStorage.setItem('atri_auto_answering', 'true');
+      console.log('💾 已保存自动答题状态到 sessionStorage');
+    }
     location.reload();
     return false;
   }

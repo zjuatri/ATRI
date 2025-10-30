@@ -1,6 +1,6 @@
 # ATRI: Automated Task Repetition Instrument
 
-**高性能智慧树刷题助手**
+## **高性能智慧树刷题助手**
 
 一个基于 Chrome Manifest V3 的智慧树平台自动刷题浏览器扩展，采用模块化架构设计，支持智能答题、错题枚举、题库管理等功能。
 

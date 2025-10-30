@@ -46,7 +46,11 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["content/page-interceptor.js"],
+      "resources": [
+        "content/page-interceptor.js",
+        "assets/background.png",
+        "assets/background2.jpg"
+      ],
       "matches": [
         "https://studywisdomh5.zhihuishu.com/*",
         "https://fusioncourseh5.zhihuishu.com/*"
